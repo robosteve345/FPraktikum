@@ -1,0 +1,2 @@
+# FPraktikum
+Fortgeschrittenenpraktikum Python-Auswertung
