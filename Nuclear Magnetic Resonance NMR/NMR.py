@@ -28,7 +28,8 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
              safename=None, yaxis=None, xaxis=None, yerr=None, plotlabel=None, 
              legend=None, plotlabel2=None, plotlabel3=None, plotlabel4=None,
              plotlabel5=None, plotlabel6=None, plotlabel7=None, titel=None,
-             xlim=None, ylim=None):
+             xlim=None, ylim=None
+             ):
     
     fig = plt.figure(figsize=size) 
     ax = fig.add_subplot(1, 1, 1)
@@ -139,7 +140,7 @@ def lorentzian(x, x0, gamma, A):
 
 
 """Part 2"""
-def t1fit(x, A, T1):
+def t1fit(x, A, T1, C):
         """
         Fit-function for the spin-lattice-relaxation (Mz dependent)
         to the formula:      M_{Echo}(dt) \propto M_{Sat}*(1 - exp(-dt/T1))
@@ -150,7 +151,7 @@ def t1fit(x, A, T1):
         A : integer, M_{sat}
         T1 : integer, spin-lattice-relaxation time in seconds
         """
-        return A*(1 - np.exp(-x/T1))
+        return A*(1 - np.exp(-x/T1)) + C 
     
 
 def t2fit(x, A, T2):
@@ -170,6 +171,41 @@ def t2fit(x, A, T2):
     # -2*tau, s.d. wir hier ~1500 als fitparameter bekommen...
     # Vergleich mit Wikipedia: https://en.wikipedia.org/wiki/Relaxation_%28NMR%29#T1_and_T2
     # -> T2: da ist es auch ohne die -2...
+    
+    
+def intensityintegral(re, im, t, n, m):
+        """
+        Compute integrals over signal magnitude for each measurement
+        
+        Parameters
+        ----------
+        re : array_like, real part.
+        im : array_like, imaginary part.
+        t : array_like, abscissa data.
+        n : integer, interval length.
+        m : integer, amount of measurements.
+
+        Returns
+        -------
+        x :  absciss data, sliced size = n x m.
+        magn : magnitude of the complex signal, size = n x m
+        integmagn : array_like, integrated signal, size = m
+        """
+        x = []
+        magn = []
+        integmagn = [] # integrated signal via simpson method
+        maximum = []
+        for i in range(m):
+            integmagn.append(integrate.simpson(y=np.sqrt(re[i*n:i*n+n]**2 + 
+                                            im[i*n:i*n+n]**2),
+                                            x=t[i*n:i*n+n]))
+            magn.append(np.sqrt(re[i*n:i*n+n]**2 + im[i*n:i*n+n]**2))
+            x.append(t[i*n:i*n+n])
+            maximum.append(max(np.sqrt(re[i*n:i*n+n]**2 + im[i*n:i*n+n]**2)))
+        
+        # print("maximum = {}".format(maximum))
+        # print("integmagn = {}".format(integmagn))
+        return x, magn, integmagn
 
 
 """Part 2"""
@@ -255,104 +291,100 @@ def main():
     # print("The lorentzian-line-with is: tau = {}".format(popt2[1]))
     
     
-    # """Part 2"""
-    # """T1-measurement"""
-    # Text-datei zu ersetzen mit: "T1_raw.txt" ->range(100), 
+    """Part 2"""
+    """T1-measurement"""
+    # "T1_raw.txt" ->range(100) (brauchbar)
+    # "T1_manual.txt" -> range(10) (unbrauchbar)
+    # "T1_manualext.txt" -> range(14) (brauchbar)
+    # "T1_auto30.txt" -> range(30) (UNBRAUCHBAR, wird gar nicht benutzt)
+    # Bemerkung: habe bei dne dateien 1-2 zeilen txt datei gelöscht, weil python sonst fehler
+    # etc. code anzeigte 
     
-    # NTNMR-Fit: T1 = 6792560298301635 ± 1841978447959600700000000000000
-    re1, im1, t1 = np.loadtxt("T1_manualext.txt", usecols=(0,1,2), unpack=True, skiprows=3)
-    dt = np.loadtxt("T1_manualext_fit.txt", usecols=0, unpack=True, skiprows=3)
+    # Import data:
+    re12, im12, t12 = np.loadtxt("T1_manualext.txt", usecols=(0,1,2), unpack=True, skiprows=4)
+    dt12 = np.loadtxt("T1_manualext_fit.txt", usecols=0, unpack=True, skiprows=3)
     
-    # Compute integrals over signal magnitude for each measurement (12):
-    integmagntrapz1 = [] # integral via simpson and trapezoid method 
-    integmagnsimps1 = []
-    t1plotx = []
-    t1ploty = []
-    for i in range(14):
-        integmagntrapz1.append(np.trapz(y=np.sqrt(re1[i*1024:i*1024+1024]**2 + 
-                                            im1[i*1024:i*1024+1024]**2),
-                                            x=t1[i*1024:i*1024+1024]))
-        integmagnsimps1.append(integrate.simpson(y=np.sqrt(re1[i*1024:i*1024+1024]**2 + 
-                                            im1[i*1024:i*1024+1024]**2),
-                                            x=t1[i*1024:i*1024+1024]))
-        t1ploty.append(np.sqrt(re1[i*1024:i*1024+1024]**2 + 
-                                im1[i*1024:i*1024+1024]**2))
-        t1plotx.append(t1[i*1024:i*1024+1024])
+    re13, im13, t13 = np.loadtxt("T1_manual.txt", usecols=(0,1,2), unpack=True, skiprows=4)
+    dt13 = np.loadtxt("T1_manual_fit.txt", usecols=0, unpack=True, skiprows=3)*1e4
     
-    print("intensity1 = {}".format(integmagntrapz1))  
-    print("dt = {}".format(dt))
+    re14, im14, t14 = np.loadtxt("T1_raw.txt", usecols=(0,1,2), unpack=True, skiprows=4)
     
-        
-        
-    # # Plot for various tau (5 chosen spread values) (not mandatory):
-    # niceplot(x=t1plotx[0], y=t1ploty[0]*1e-6, c='tab:blue',
-    #          x2=t1plotx[-1], y2=t1ploty[-1]*1e-6, c2='tab:orange',
-    # #           x3=t2plotx[5], y3=t2ploty[5]*1e-6, c3='tab:green',
-    # #           x4=t2plotx[8], y4=t2ploty[8]*1e-6, c2='tab:red',
-    # #           x5=t2plotx[11], y5=t2ploty[11]*1e-6, c='tab:purple',
-    #           plotlabel=r'$\Delta$t=11\,\mu$s', plotlabel2=r'$\Delta$t=48\,\mu$s',
-    # #           plotlabel3=r'$\tau=151\,\mu$s', plotlabel4=r'$\tau=468\,\mu$s',
-    # #           plotlabel5=r'$\tau=1000\,\mu$s',
-    #           plot2=True,
-    #           # plot3=True, plot4=True, plot5=True,
-    # #           lw=3, lw2=3, lw3=3, lw4=3, lw5=3,
-    # #           xaxis=r'$\Delta$t / $\mu$s', yaxis=r'Intensity / $1\times 10^6$', 
-    #           titel=r'Signals in dependence of $\tau$', legend=True,
-    # #           safefig=True, safename='T1plot',
-    #           xlim=(0,200), ylim=(0, max(t1ploty[0])*1.05*1e-6)
-    # )
+    # Compute integrals:
+    x2, magn2, integmagn2 = intensityintegral(re12, im12, t12, n=1024, m=14)  
+    x3, magn3, integmagn3 = intensityintegral(re13, im13, t13, n=1024, m=10)   
+    x4, magn4, integmagn4 = intensityintegral(re14, im14, t14, n=1024, m=100)
+    dt14 = np.linspace(0,len(integmagn4), len(integmagn4)) # ausgedacht???
+    
+    # Plot first and last measurement of each set:
+    # niceplot(x=x1[0], y=magn1[0], c='k', marker='.', marker2='.', ls='', ls2='',
+    #          plot2=True, x2=x1[-1], y2=magn1[-1], xlim=(0,1000), ylim=(0,1.7e6)
+    #          ) # UNBRAUCHBAR
+    # niceplot(x=x2[0], y=magn2[0], c='k', marker='.', marker2='.', ls='', ls2='',
+    #           plot2=True, x2=x2[-1], y2=magn2[-1], xlim=(0,1000), ylim=(0,1.7e6)
+    #           )
+    # niceplot(x=x3[0], y=magn3[0], c='k', marker='.', marker2='.', ls='', ls2='',
+    #           plot2=True, x2=x3[-1], y2=magn3[-1], xlim=(0,1000), ylim=(0,1.7e6)
+    #           )
+    # niceplot(x=x4[0], y=magn4[0], c='k', marker='.', marker2='.', ls='', ls2='',
+    #           plot2=True, x2=x4[-1], y2=magn4[-1], xlim=(0,1000), ylim=(0,1.7e6)
+    #           )
+    # Obtain fit-parameters for each measurement set:
+    popt7, cov7 = fit(t1fit, dt12, integmagn2, p0=[1e8, 3, 1], # KOMISCH
+                      sigma=None, absolute_sigma=True)
+    popt8, cov8 = fit(t1fit, dt13[::-1], integmagn3, p0=[1e8, 3, 1],
+                      sigma=None, absolute_sigma=True) # KOMISCH
+    popt9, cov9 = fit(t1fit, dt14[0:50], integmagn4[0:50], p0=[1e8, 3, 1],
+                      sigma=None, absolute_sigma=True)
     
     # Fit parameters for spin-lattice relaxation time T1:
-    popt4, cov4 = fit(t1fit, dt, integmagntrapz1, 
-                      sigma=None, absolute_sigma=True)
-    print("The T1-fit parameters are:")
-    print("A+-∆A={}+-{}".format(popt4[0], np.sqrt(np.diag(cov4))[0]))
-    print("T1+-∆T1={}+-{} / seconds".format(popt4[1], np.sqrt(np.diag(cov4))[1]))
+    print("The T1-fit-manualext parameters are:")
+    # print("A+-∆A={}+-{}".format(popt7[0], np.sqrt(np.diag(cov7))[0])) 
+    print("T1+-∆T1={}+-{} / seconds".format(popt7[1], np.sqrt(np.diag(cov7))[1]))
+    # print("C+-∆C={}+-{} / seconds".format(popt7[2], np.sqrt(np.diag(cov7))[2]))
+    print("The T1-fit-manual parameters are:")
+    # print("A+-∆A={}+-{}".format(popt8[0], np.sqrt(np.diag(cov8))[0]))
+    print("T1+-∆T1={}+-{} / seconds".format(popt8[1], np.sqrt(np.diag(cov8))[1]))
+    # print("C+-∆C={}+-{} / seconds".format(popt8[2], np.sqrt(np.diag(cov8))[2]))
+    print("The T1-fit-raw parameters are:")
+    # print("A+-∆A={}+-{}".format(popt9[0], np.sqrt(np.diag(cov9))[0]))
+    print("T1+-∆T1={}+-{} / seconds".format(popt9[1], np.sqrt(np.diag(cov9))[1]))
+    # print("C+-∆C={}+-{} / seconds".format(popt9[2], np.sqrt(np.diag(cov9))[2]))
     
-    niceplot(x=np.linspace(0,200, 500), ls='', marker='.',
-              y=t1fit(np.linspace(0,200, 500), *popt4)*1e-9, 
-              c='tab:blue', xaxis=r'$\Delta$t / $\mu$s', yaxis=r'Intensity / $1\times 10^6$',
-    #          x2=fit2x, y2=np.asarray(integmagnsimps)*1e-7, c2='k', ls2='', 
-    #          marker2='s', plotlabel='fit', plotlabel2='experimental data', 
-    #          legend=True, safefig=True, safename='T2fit',  plot2=True
-    #          titel=r'Determining the Spin-Spin Relaxation time T$_2$', 
-              ylim=(0, (max(t1fit(dt, *popt4)) + 0.5)*1e-9), xlim=(0,10)
-    )
+    # Plot fits from 3 measurement sets:
+    niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50], c='k',
+             x2=np.linspace(0,40,1000), y2=t1fit(np.linspace(0,40,1000), *popt9), 
+             x3=dt12, y3=np.asarray(integmagn2), c3='g', c4='g',
+             x4=np.linspace(0,40,1000), y4=t1fit(np.linspace(0,40,1000), *popt7), 
+             x5=dt13[::-1], y5=np.asarray(integmagn3), c5='tab:olive', c6='tab:olive',
+             x6=np.linspace(0,40,1000), y6=t1fit(np.linspace(0,40,1000), *popt8), 
+             c2='k', plotlabel=r'raw', plotlabel2=r'fit raw', 
+             plotlabel3='manualext', plotlabel4='fit manualext',
+             plotlabel5='manual', plotlabel6='fit manual', plot5=True, plot6=True, 
+             ls='',  marker='s', plot2=True, plot3=True, plot4=True, 
+             lw2=3, lw4=3, ls3='', marker3='s', ls5='', lw6=3, marker5='s',
+             xaxis=r'$\Delta$t / s', yaxis=r'Intensity / $1\times 10^7$', 
+             titel=r'Signals in dependence of $\Delta$t', legend=True,
+             safefig=True, safename='T1_plotfits',
+             xlim=(-0.5,20), ylim=(0.9*min(np.asarray(integmagn2)), max(np.asarray(integmagn2))+0.5e7)
+             )
+
     
-    
-    # """T2-measurement"""
+    """T2-measurement"""
     # # NTNMR fit: T2= 746.389734 ± 28.430624 mikroseconds
-    # # fit21 entspricht maximum des realteils jeder messung, fit22 = ??
-    # # fit2x sind tau-Werte
-    # fit2x, fit21, fit22 = np.loadtxt("T2fit.txt", unpack=True, 
+    # tau, fit21, fit22 = np.loadtxt("T2fit.txt", unpack=True, 
     #                                     usecols=(0,1,2), skiprows=0)
     # re2, im2, t2 = np.loadtxt("T2_rawdata.txt", usecols=(0,1,2), 
     #                           skiprows=3, unpack=True)
     
     # # Compute integrals over signal magnitude for each measurement (12):
-    # integmagntrapz2 = [] # integral via simpson and trapezoid method 
-    # integmagnsimps2 = []
-    # t2plotx = []
-    # t2ploty = []
-    # for i in range(12):
-    #     integmagntrapz2.append(np.trapz(y=np.sqrt(re2[i*512:i*512+512]**2 + 
-    #                                         im2[i*512:i*512+512]**2),
-    #                                         x=t2[i*512:i*512+512]))
-    #     integmagnsimps2.append(integrate.simpson(y=np.sqrt(re2[i*512:i*512+512]**2 + 
-    #                                         im2[i*512:i*512+512]**2),
-    #                                         x=t2[i*512:i*512+512], dx=2))
-    #     t2ploty.append(np.sqrt(re2[i*512:i*512+512]**2 + 
-    #                            im2[i*512:i*512+512]**2))
-    #     t2plotx.append(t2[i*512:i*512+512])
-    # print("intensity2 = {}".format(integmagntrapz2))   
-    # print("tau = {}".format(fit2x)) # used values for tau
+    # x5, magn5, integmagn5 = intensityintegral(re2, im2, t2, 512, 12)
     
     # # Plot for various tau (5 chosen spread values) (not mandatory):
-    # niceplot(x=t2plotx[0], y=t2ploty[0]*1e-6, c5='tab:blue',
-    #           x2=t2plotx[2], y2=t2ploty[2]*1e-6, c4='tab:orange',
-    #           x3=t2plotx[5], y3=t2ploty[5]*1e-6, c3='tab:green',
-    #           x4=t2plotx[8], y4=t2ploty[8]*1e-6, c2='tab:red',
-    #           x5=t2plotx[11], y5=t2ploty[11]*1e-6, c='tab:purple',
+    # niceplot(x=x5[0], y=magn5[0]*1e-6, c5='tab:blue',
+    #           x2=x5[2], y2=magn5[2]*1e-6, c4='tab:orange',
+    #           x3=x5[5], y3=magn5[5]*1e-6, c3='tab:green',
+    #           x4=x5[8], y4=magn5[8]*1e-6, c2='tab:red',
+    #           x5=x5[11], y5=magn5[11]*1e-6, c='tab:purple',
     #           plotlabel=r'$\tau=11\,\mu$s', plotlabel2=r'$\tau=48\,\mu$s',
     #           plotlabel3=r'$\tau=151\,\mu$s', plotlabel4=r'$\tau=468\,\mu$s',
     #           plotlabel5=r'$\tau=1000\,\mu$s',
@@ -366,23 +398,23 @@ def main():
     
     # # Fit parameters for spin-spin relaxation time T2 from the 
     # # integrated signals:
-    # popt5, cov5 = fit(t2fit, fit2x, integmagnsimps, p0=[0.7e8, 746.389734], 
+    # popt5, cov5 = fit(t2fit, tau, integmagn5, p0=[0.7e8, 746.389734], 
     #                   bounds=[[0.5e8, 500],[1e8, 1800]], sigma=None, 
     #                   absolute_sigma=True)
     # # Bemerkung: Fit scheint für mittlere tau und große tau rel. schlecht zu passen
     # print("The T2-fit parameters are:")
     # print("A+-∆A={}+-{}".format(popt5[0], np.sqrt(np.diag(cov5))[0]))
     # print("T2+-∆T2={}+-{} / microseconds".format(popt5[1], np.sqrt(np.diag(cov5))[1]))
-    
     # niceplot(x=np.linspace(0,1000, 1000), 
-    #          y=t2fit(np.linspace(0,1000, 1000), *popt5)*1e-7, lw=3,
-    #          c='tab:blue', xaxis=r'$\tau$ / $\mu$s', yaxis=r'Intensity / $1\times 10^7$',
-    #          x2=fit2x, y2=np.asarray(integmagnsimps)*1e-7, c2='k', ls2='', 
-    #          marker2='s', plotlabel='fit', plotlabel2='experimental data', 
-    #          legend=True, safefig=True, safename='T2fit', 
-    #          titel=r'Determining the Spin-Spin Relaxation time T$_2$', 
-    #          ylim=(2, (max(t2fit(fit2x, *popt5)) + 0.5)*1e-7), 
-    #          xlim=(0,1000), plot2=True
+    #           y=t2fit(np.linspace(0,1000, 1000), *popt5)*1e-7, lw=3,
+    #           c='tab:blue', xaxis=r'$\tau$ / $\mu$s', 
+    #           yaxis=r'Intensity / $1\times 10^7$',
+    #           x2=tau, y2=np.asarray(integmagn5)*1e-7, c2='k', ls2='', 
+    #           marker2='s', plotlabel='fit', plotlabel2='experimental data', 
+    #           legend=True, safefig=True, safename='T2fit', 
+    #           titel=r'Determining the Spin-Spin Relaxation time T$_2$', 
+    #           ylim=(2, (max(t2fit(tau, *popt5)) + 0.5)*1e-7), 
+    #           xlim=(0,1000), plot2=True
     # )
 
     plt.show()
