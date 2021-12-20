@@ -216,79 +216,79 @@ def main():
     print(__doc__)
     
     """Part 1"""
-    # # Load data
-    # re45, im45, f45 = np.loadtxt("45.txt", unpack=True, skiprows=n, usecols=(0,1,2))
-    # re452, im452, f452 = np.loadtxt("452.txt", unpack=True, skiprows=n, usecols=(0,1,2))
-    # re454, im454, f454 = np.loadtxt("454.txt", unpack=True, skiprows=n, usecols=(0,1,2))
-    # re456, im456, f456 = np.loadtxt("456.txt", unpack=True, skiprows=n, usecols=(0,1,2))
-    # re458, im458, f458 = np.loadtxt("458.txt", unpack=True, skiprows=n, usecols=(0,1,2))
-    # re46, im46, f46 = np.loadtxt("46.txt", unpack=True, skiprows=n, usecols=(0,1,2))
-    # reres, imres, fres = np.loadtxt("resonance.txt", unpack=True, skiprows=n, usecols=(0,1,2))
+    # Load data
+    re45, im45, f45 = np.loadtxt("45.txt", unpack=True, skiprows=n, usecols=(0,1,2))
+    re452, im452, f452 = np.loadtxt("452.txt", unpack=True, skiprows=n, usecols=(0,1,2))
+    re454, im454, f454 = np.loadtxt("454.txt", unpack=True, skiprows=n, usecols=(0,1,2))
+    re456, im456, f456 = np.loadtxt("456.txt", unpack=True, skiprows=n, usecols=(0,1,2))
+    re458, im458, f458 = np.loadtxt("458.txt", unpack=True, skiprows=n, usecols=(0,1,2))
+    re46, im46, f46 = np.loadtxt("46.txt", unpack=True, skiprows=n, usecols=(0,1,2))
+    reres, imres, fres = np.loadtxt("resonance.txt", unpack=True, skiprows=n, usecols=(0,1,2))
     
-    # # Plot all the different frequency measurements
-    # niceplot(x=f45, y=np.sqrt(re45**2+im45**2)*1e-6, c="tab:blue", 
-    #           plotlabel=r'$\nu$ = $\,$45MHz', legend=True,
-    #           plot2=True, plot3=True, plot4=True, plot5=True, plot6=True, 
-    #           plot7=True, xaxis=r'$\nu$ / MHz', yaxis=r'Intensity / $\times 10^6$',
-    #           titel=r'Finding the resonance frequency $\nu_{res}$',
-    #           x2=f452, y2=np.sqrt(re452**2+im452**2)*1e-6, c2="tab:orange", 
-    #           safefig=True, safename='frequencies', plotlabel2=r'$\nu$ = $\,$45.2MHz',
-    #           x4=f454, y4=np.sqrt(re454**2+im454**2)*1e-6, c4="tab:pink", 
-    #           plotlabel4=r'$\nu$ = $\,$45.4MHz',
-    #           x5=f456, y5=np.sqrt(re456**2+im456**2)*1e-6, c5="tab:red", 
-    #           plotlabel5=r'$\nu$ = $\,$45.6MHz',
-    #           x6=f458, y6=np.sqrt(re458**2+im458**2)*1e-6, c6="tab:purple", 
-    #           plotlabel6=r'$\nu$ = $\,$45.8MHz',
-    #           x7=f46, y7=np.sqrt(re46**2+im46**2)*1e-6, c7="tab:brown", 
-    #           plotlabel7=r'$\nu$ = $\,$46MHz',
-    #           x3=fres, y3=np.sqrt(reres**2+imres**2)*1e-6, c3="tab:green", 
-    #           plotlabel3=r'$\nu_{res}$ = 45.385MHz', xlim=(-650, 650),
-    #           lw=3, lw2=3, lw3=3, lw4=3, lw5=3, lw6=3, lw7=3, fs=16,
-    #           ylim=(0,2.8)
-    # )
+    # Plot all the different frequency measurements
+    niceplot(x=f45, y=np.sqrt(re45**2+im45**2)*1e-6, c="tab:blue", 
+              plotlabel=r'$\nu$ = $\,$45MHz', legend=True,
+              plot2=True, plot3=True, plot4=True, plot5=True, plot6=True, 
+              plot7=True, xaxis=r'$\nu$ / MHz', yaxis=r'Intensity / $\times 10^6$',
+              titel=r'Finding the resonance frequency $\nu_{res}$',
+              x2=f452, y2=np.sqrt(re452**2+im452**2)*1e-6, c2="tab:orange", 
+              safefig=True, safename='frequencies', plotlabel2=r'$\nu$ = $\,$45.2MHz',
+              x4=f454, y4=np.sqrt(re454**2+im454**2)*1e-6, c4="tab:pink", 
+              plotlabel4=r'$\nu$ = $\,$45.4MHz',
+              x5=f456, y5=np.sqrt(re456**2+im456**2)*1e-6, c5="tab:red", 
+              plotlabel5=r'$\nu$ = $\,$45.6MHz',
+              x6=f458, y6=np.sqrt(re458**2+im458**2)*1e-6, c6="tab:purple", 
+              plotlabel6=r'$\nu$ = $\,$45.8MHz',
+              x7=f46, y7=np.sqrt(re46**2+im46**2)*1e-6, c7="tab:brown", 
+              plotlabel7=r'$\nu$ = $\,$46MHz',
+              x3=fres, y3=np.sqrt(reres**2+imres**2)*1e-6, c3="tab:green", 
+              plotlabel3=r'$\nu_{res}$ = 45.385MHz', xlim=(-650, 650),
+              lw=3, lw2=3, lw3=3, lw4=3, lw5=3, lw6=3, lw7=3, fs=16,
+              ylim=(0,2.8)
+    )
 
-    # # Generate parameters and errors for both pulse signal 
-    # # popt1, cov1 = fit(gaussian, fres, np.sqrt(reres**2+imres**2), sigma=None,
-    #                   # absolute_sigma=True)
-    # popt3, cov3 = fit(gaussian2, fres, np.sqrt(reres**2+imres**2), sigma=None,
-    #                   absolute_sigma=True)
-    # popt2, cov2 = fit(lorentzian, fres, np.sqrt(reres**2+imres**2), sigma=None,
-    #                   absolute_sigma=True)
+    # Generate parameters and errors for both pulse signal 
+    # popt1, cov1 = fit(gaussian, fres, np.sqrt(reres**2+imres**2), sigma=None,
+                      # absolute_sigma=True)
+    popt3, cov3 = fit(gaussian2, fres, np.sqrt(reres**2+imres**2), sigma=None,
+                      absolute_sigma=True)
+    popt2, cov2 = fit(lorentzian, fres, np.sqrt(reres**2+imres**2), sigma=None,
+                      absolute_sigma=True)
     
     
-    # # Plot of the resonance frequency with the two fits:
-    # niceplot(safefig=True, safename='fitgausslorentz', xaxis=r'$\nu$ / MHz', 
-    #           yaxis=r'Intensity / $1\times 10^6$', 
-    #           titel='Comparing different Fit models to the peak', legend=True, 
-    #           plot2=False, plot3=True, plot4=True,
-    #           x=fres, y=np.sqrt(reres**2+imres**2)*1e-6, c='k', 
-    #           plotlabel=r'$\nu_{res}$ = $\,$45.385MHz',
-    #           #x2=fres, y2=gaussian(fres, *popt1), c2='tab:orange', 
-    #           plotlabel2='gaussian',
-    #           x3=np.linspace(-100, 100, 1000), 
-    #           y3=lorentzian(np.linspace(-100, 100, 1000), *popt2)*1e-6, 
-    #           c3='tab:blue', 
-    #           plotlabel3='Lorentzian',
-    #           x4=np.linspace(-100, 100, 1000), 
-    #           y4=gaussian2(np.linspace(-100, 100, 1000), *popt3)*1e-6, 
-    #           c4='tab:orange', 
-    #           plotlabel4='Gaussian',
-    #           ls='', marker='s', lw2=0.5, lw3=3, lw4=3, ms=5, 
-    #           xlim=(-100,100), ylim=(0,2.8)
-    # )
-    # # print("Die Parameter des gaussian-Fits sind:")
-    # # print("mu+-∆mu={}+-{}".format(popt1[0], np.sqrt(np.diag(cov1))[0]))
-    # # print("sigma+-∆sigma={}+-{}".format(popt1[1], np.sqrt(np.diag(cov1))[1]))
-    # print("Die Parameter des gaussian2-Fits sind:")
-    # print("A+-∆A={}+-{}".format(popt3[0], np.sqrt(np.diag(cov3))[0]))
-    # print("mu+-∆mu={}+-{}".format(popt3[1], np.sqrt(np.diag(cov3))[1]))
-    # print("sigma+-∆sigma={}+-{}".format(popt3[2], np.sqrt(np.diag(cov3))[2]))
-    # print("The gaussian-line-with is: tau = {}".format(popt3[2]))
-    # print("Die Parameter des lorentzian-Fits sind:")
-    # print("x0+-∆x0={}+-{}".format(popt2[0], np.sqrt(np.diag(cov2))[0]))
-    # print("gamma+-∆gamma={}+-{}".format(popt2[1], np.sqrt(np.diag(cov2))[1]))
-    # print("A+-∆A={}+-{}".format(popt2[2], np.sqrt(np.diag(cov2))[2]))
-    # print("The lorentzian-line-with is: tau = {}".format(popt2[1]))
+    # Plot of the resonance frequency with the two fits:
+    niceplot(safefig=True, safename='fitgausslorentz', xaxis=r'$\nu$ / MHz', 
+              yaxis=r'Intensity / $1\times 10^6$', 
+              titel='Comparing different Fit models to the peak', legend=True, 
+              plot2=False, plot3=True, plot4=True,
+              x=fres, y=np.sqrt(reres**2+imres**2)*1e-6, c='k', 
+              plotlabel=r'$\nu_{res}$ = $\,$45.385MHz',
+              #x2=fres, y2=gaussian(fres, *popt1), c2='tab:orange', 
+              plotlabel2='gaussian',
+              x3=np.linspace(-100, 100, 1000), 
+              y3=lorentzian(np.linspace(-100, 100, 1000), *popt2)*1e-6, 
+              c3='tab:blue', 
+              plotlabel3='Lorentzian',
+              x4=np.linspace(-100, 100, 1000), 
+              y4=gaussian2(np.linspace(-100, 100, 1000), *popt3)*1e-6, 
+              c4='tab:orange', 
+              plotlabel4='Gaussian',
+              ls='', marker='s', lw2=0.5, lw3=3, lw4=3, ms=5, 
+              xlim=(-100,100), ylim=(0,2.8)
+    )
+    # print("Die Parameter des gaussian-Fits sind:")
+    # print("mu+-∆mu={}+-{}".format(popt1[0], np.sqrt(np.diag(cov1))[0]))
+    # print("sigma+-∆sigma={}+-{}".format(popt1[1], np.sqrt(np.diag(cov1))[1]))
+    print("Die Parameter des gaussian2-Fits sind:")
+    print("A+-∆A={}+-{}".format(popt3[0], np.sqrt(np.diag(cov3))[0]))
+    print("mu+-∆mu={}+-{}".format(popt3[1], np.sqrt(np.diag(cov3))[1]))
+    print("sigma+-∆sigma={}+-{}".format(popt3[2], np.sqrt(np.diag(cov3))[2]))
+    print("The gaussian-line-with is: tau = {}".format(popt3[2]))
+    print("Die Parameter des lorentzian-Fits sind:")
+    print("x0+-∆x0={}+-{}".format(popt2[0], np.sqrt(np.diag(cov2))[0]))
+    print("gamma+-∆gamma={}+-{}".format(popt2[1], np.sqrt(np.diag(cov2))[1]))
+    print("A+-∆A={}+-{}".format(popt2[2], np.sqrt(np.diag(cov2))[2]))
+    print("The lorentzian-line-with is: tau = {}".format(popt2[1]))
     
     
     """Part 2"""
@@ -338,17 +338,17 @@ def main():
     
     # Fit parameters for spin-lattice relaxation time T1:
     print("The T1-fit-manualext parameters are:")
-    # print("A+-∆A={}+-{}".format(popt7[0], np.sqrt(np.diag(cov7))[0])) 
-    print("T1+-∆T1={}+-{} / seconds".format(popt7[1], np.sqrt(np.diag(cov7))[1]))
-    # print("C+-∆C={}+-{} / seconds".format(popt7[2], np.sqrt(np.diag(cov7))[2]))
+    print("A+-∆A={}+-{}".format(popt7[0], np.sqrt(np.diag(cov7))[0])) 
+    print("T1+-∆T1={}+-{} / UNIT??".format(popt7[1], np.sqrt(np.diag(cov7))[1]))
+    print("C+-∆C={}+-{} ".format(popt7[2], np.sqrt(np.diag(cov7))[2]))
     print("The T1-fit-manual parameters are:")
-    # print("A+-∆A={}+-{}".format(popt8[0], np.sqrt(np.diag(cov8))[0]))
-    print("T1+-∆T1={}+-{} / seconds".format(popt8[1], np.sqrt(np.diag(cov8))[1]))
-    # print("C+-∆C={}+-{} / seconds".format(popt8[2], np.sqrt(np.diag(cov8))[2]))
+    print("A+-∆A={}+-{}".format(popt8[0], np.sqrt(np.diag(cov8))[0]))
+    print("T1+-∆T1={}+-{} /  UNIT??".format(popt8[1], np.sqrt(np.diag(cov8))[1]))
+    print("C+-∆C={}+-{} ".format(popt8[2], np.sqrt(np.diag(cov8))[2]))
     print("The T1-fit-raw parameters are:")
-    # print("A+-∆A={}+-{}".format(popt9[0], np.sqrt(np.diag(cov9))[0]))
-    print("T1+-∆T1={}+-{} / seconds".format(popt9[1], np.sqrt(np.diag(cov9))[1]))
-    # print("C+-∆C={}+-{} / seconds".format(popt9[2], np.sqrt(np.diag(cov9))[2]))
+    print("A+-∆A={}+-{}".format(popt9[0], np.sqrt(np.diag(cov9))[0]))
+    print("T1+-∆T1={}+-{} /  UNIT??".format(popt9[1], np.sqrt(np.diag(cov9))[1]))
+    print("C+-∆C={}+-{} ".format(popt9[2], np.sqrt(np.diag(cov9))[2]))
     
     # Plot fits from 3 measurement sets:
     niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50], c='k',
@@ -365,57 +365,59 @@ def main():
              xaxis=r'$\Delta$t / s', yaxis=r'Intensity / $1\times 10^7$', 
              titel=r'Signals in dependence of $\Delta$t', legend=True,
              safefig=True, safename='T1_plotfits',
-             xlim=(-0.5,20), ylim=(0.9*min(np.asarray(integmagn2)), max(np.asarray(integmagn2))+0.5e7)
+             xlim=(-0.5,20), ylim=(0.9*min(np.asarray(integmagn2)), 
+                                   max(np.asarray(integmagn2))+0.5e7),
+             plot7=True, x7=np.linspace(0,40,1000), y7=34871565 + 52623605*(1 - np.exp(-np.linspace(0,40,1000)/0.28384812))
              )
 
     
     """T2-measurement"""
     # # NTNMR fit: T2= 746.389734 ± 28.430624 mikroseconds
-    # tau, fit21, fit22 = np.loadtxt("T2fit.txt", unpack=True, 
-    #                                     usecols=(0,1,2), skiprows=0)
-    # re2, im2, t2 = np.loadtxt("T2_rawdata.txt", usecols=(0,1,2), 
-    #                           skiprows=3, unpack=True)
+    tau, fit21, fit22 = np.loadtxt("T2fit.txt", unpack=True, 
+                                        usecols=(0,1,2), skiprows=0)
+    re2, im2, t2 = np.loadtxt("T2_rawdata.txt", usecols=(0,1,2), 
+                              skiprows=3, unpack=True)
     
-    # # Compute integrals over signal magnitude for each measurement (12):
-    # x5, magn5, integmagn5 = intensityintegral(re2, im2, t2, 512, 12)
+    # Compute integrals over signal magnitude for each measurement (12):
+    x5, magn5, integmagn5 = intensityintegral(re2, im2, t2, 512, 12)
     
-    # # Plot for various tau (5 chosen spread values) (not mandatory):
-    # niceplot(x=x5[0], y=magn5[0]*1e-6, c5='tab:blue',
-    #           x2=x5[2], y2=magn5[2]*1e-6, c4='tab:orange',
-    #           x3=x5[5], y3=magn5[5]*1e-6, c3='tab:green',
-    #           x4=x5[8], y4=magn5[8]*1e-6, c2='tab:red',
-    #           x5=x5[11], y5=magn5[11]*1e-6, c='tab:purple',
-    #           plotlabel=r'$\tau=11\,\mu$s', plotlabel2=r'$\tau=48\,\mu$s',
-    #           plotlabel3=r'$\tau=151\,\mu$s', plotlabel4=r'$\tau=468\,\mu$s',
-    #           plotlabel5=r'$\tau=1000\,\mu$s',
-    #           plot2=True, plot3=True, plot4=True, plot5=True,
-    #           lw=3, lw2=3, lw3=3, lw4=3, lw5=3,
-    #           xaxis=r'$\tau$ / $\mu$s', yaxis=r'Intensity / $1\times 10^6$', 
-    #           titel=r'Signals in dependence of $\tau$', legend=True,
-    #           safefig=True, safename='T1plot',
-    #           xlim=(0,100), ylim=(0,3.85)
-    # )
+    # Plot for various tau (5 chosen spread values) (not mandatory):
+    niceplot(x=x5[0], y=magn5[0]*1e-6, c5='tab:blue',
+              x2=x5[2], y2=magn5[2]*1e-6, c4='tab:orange',
+              x3=x5[5], y3=magn5[5]*1e-6, c3='tab:green',
+              x4=x5[8], y4=magn5[8]*1e-6, c2='tab:red',
+              x5=x5[11], y5=magn5[11]*1e-6, c='tab:purple',
+              plotlabel=r'$\tau=11\,\mu$s', plotlabel2=r'$\tau=48\,\mu$s',
+              plotlabel3=r'$\tau=151\,\mu$s', plotlabel4=r'$\tau=468\,\mu$s',
+              plotlabel5=r'$\tau=1000\,\mu$s',
+              plot2=True, plot3=True, plot4=True, plot5=True,
+              lw=3, lw2=3, lw3=3, lw4=3, lw5=3,
+              xaxis=r'$\tau$ / $\mu$s', yaxis=r'Intensity / $1\times 10^6$', 
+              titel=r'Signals in dependence of $\tau$', legend=True,
+              safefig=True, safename='T1plot',
+              xlim=(0,100), ylim=(0,3.85)
+    )
     
-    # # Fit parameters for spin-spin relaxation time T2 from the 
-    # # integrated signals:
-    # popt5, cov5 = fit(t2fit, tau, integmagn5, p0=[0.7e8, 746.389734], 
-    #                   bounds=[[0.5e8, 500],[1e8, 1800]], sigma=None, 
-    #                   absolute_sigma=True)
-    # # Bemerkung: Fit scheint für mittlere tau und große tau rel. schlecht zu passen
-    # print("The T2-fit parameters are:")
-    # print("A+-∆A={}+-{}".format(popt5[0], np.sqrt(np.diag(cov5))[0]))
-    # print("T2+-∆T2={}+-{} / microseconds".format(popt5[1], np.sqrt(np.diag(cov5))[1]))
-    # niceplot(x=np.linspace(0,1000, 1000), 
-    #           y=t2fit(np.linspace(0,1000, 1000), *popt5)*1e-7, lw=3,
-    #           c='tab:blue', xaxis=r'$\tau$ / $\mu$s', 
-    #           yaxis=r'Intensity / $1\times 10^7$',
-    #           x2=tau, y2=np.asarray(integmagn5)*1e-7, c2='k', ls2='', 
-    #           marker2='s', plotlabel='fit', plotlabel2='experimental data', 
-    #           legend=True, safefig=True, safename='T2fit', 
-    #           titel=r'Determining the Spin-Spin Relaxation time T$_2$', 
-    #           ylim=(2, (max(t2fit(tau, *popt5)) + 0.5)*1e-7), 
-    #           xlim=(0,1000), plot2=True
-    # )
+    # Fit parameters for spin-spin relaxation time T2 from the 
+    # integrated signals:
+    popt5, cov5 = fit(t2fit, tau, integmagn5, p0=[0.7e8, 746.389734], 
+                      bounds=[[0.5e8, 500],[1e8, 1800]], sigma=None, 
+                      absolute_sigma=True)
+    # Bemerkung: Fit scheint für mittlere tau und große tau rel. schlecht zu passen
+    print("The T2-fit parameters are:")
+    print("A+-∆A={}+-{}".format(popt5[0], np.sqrt(np.diag(cov5))[0]))
+    print("T2+-∆T2={}+-{} / microseconds".format(popt5[1], np.sqrt(np.diag(cov5))[1]))
+    niceplot(x=np.linspace(0,1000, 1000), 
+              y=t2fit(np.linspace(0,1000, 1000), *popt5)*1e-7, lw=3,
+              c='tab:blue', xaxis=r'$\tau$ / $\mu$s', 
+              yaxis=r'Intensity / $1\times 10^7$',
+              x2=tau, y2=np.asarray(integmagn5)*1e-7, c2='k', ls2='', 
+              marker2='s', plotlabel='fit', plotlabel2='experimental data', 
+              legend=True, safefig=True, safename='T2fit', 
+              titel=r'Determining the Spin-Spin Relaxation time T$_2$', 
+              ylim=(2, (max(t2fit(tau, *popt5)) + 0.5)*1e-7), 
+              xlim=(0,1000), plot2=True
+    )
 
     plt.show()
     
