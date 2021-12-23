@@ -47,7 +47,7 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
     ax.set_ylim(ylim)
     ax.set_xlim(xlim)
 
-    if error == True:
+    if error:
         ax.errorbar(x, y, xerr=yerr, capsize=cs, c=c, ms=ms, ls=ls,
                      marker=marker, label = r'{}'.format(plotlabel))
     else:
@@ -63,27 +63,27 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
     # if error4 == True:
     #     ax.errorbar(x, y, yerr=yerr4, capsize=cs, c=c4,
     #                  label = r'${}$'.format(errorlabel4))
-    if  plot2 == True:
+    if  plot2:
         ax.plot(x2, y2, ms=ms, lw=lw2, ls=ls2, marker=marker2, c=c2, 
              label=r'{}'.format(plotlabel2))
-    if  plot3 == True:
+    if  plot3:
         ax.plot(x3, y3, ms=ms, lw=lw3, ls=ls3, marker=marker3, c=c3, 
              label=r'{}'.format(plotlabel3))
-    if  plot4 == True:
+    if  plot4:
         ax.plot(x4, y4, ms=ms, lw=lw4, ls=ls4, marker=marker4, c=c4, 
              label=r'{}'.format(plotlabel4))
-    if  plot5 == True:
+    if  plot5:
         ax.plot(x5, y5, ms=ms, lw=lw5, ls=ls5, marker=marker5, c=c5, 
              label=r'{}'.format(plotlabel5)) 
-    if  plot6 == True:
+    if  plot6:
         ax.plot(x6, y6, ms=ms, lw=lw6, ls=ls6, marker=marker6, c=c6,
                 label=r'{}'.format(plotlabel6))   
-    if  plot7 == True:
+    if  plot7:
         ax.plot(x7, y7, ms=ms, lw=lw7, ls=ls7, marker=marker7, c=c7, 
                 label=r'{}'.format(plotlabel7))
-    if legend == True:
+    if legend:
         ax.legend(fontsize=fs, markerscale=ms-8, facecolor='white')
-    if safefig == True:
+    if safefig:
         plt.savefig('{}.svg'.format(safename), dpi=300)
 
     plt.show()
