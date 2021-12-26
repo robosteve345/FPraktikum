@@ -279,10 +279,10 @@ def main():
     """Part 2"""
     """T1-measurement"""
     # "T1_raw.txt" ->range(100) (brauchbar)
-    # "T1_manual.txt" -> range(10) (unbrauchbar)
+    # "T1_manual.txt" -> range(10) (UNBRAUCHBAR)
     # "T1_manualext.txt" -> range(14) (brauchbar)
     # "T1_auto30.txt" -> range(30) (UNBRAUCHBAR, wird gar nicht benutzt)
-    # Bemerkung: habe bei dne dateien 1-2 zeilen txt datei gelöscht, weil python sonst fehler
+    # Bemerkung: habe bei den Dateien 1-2 zeilen txt datei gelöscht, weil python sonst fehler
     # etc. code anzeigte 
     
     # Import data:
@@ -290,7 +290,7 @@ def main():
     dt12, k12 = np.loadtxt("T1_manualext_fit.txt", usecols=(0,1), unpack=True, skiprows=3)
     
     re14, im14, t14 = np.loadtxt("T1_raw.txt", usecols=(0,1,2), unpack=True, skiprows=4)
-    dt14 = np.linspace(0,20,100) 
+    dt14 = np.linspace(0,20,100) # T1-Parameter hängt stark von diesem Intervall ab. Weißt du genauer wie diese definiert ist?
     
     # Compute integrals: 
     x2, magn2, integmagn2 = intensityintegral(re12, im12, t12, n=1024, m=14)  
@@ -300,36 +300,21 @@ def main():
     popt7, cov7 = fit(t1fit, dt12, k12, p0=[2e7, 0.9, 2e7], 
                       sigma=None, absolute_sigma=True)
     popt9, cov9 = fit(t1fit, dt14[0:50], integmagn4[0:50], p0=[1e7, 0.9, 1],
-                        sigma=None, absolute_sigma=True)
+                      sigma=None, absolute_sigma=True)
     
     # Fit parameters for spin-lattice relaxation time T1:
     print("MANUALEXT-T1-FIT PARAMETERS:")
     print("A+-∆A={}+-{}".format(popt7[0], np.sqrt(np.diag(cov7))[0])) 
     print("T1+-∆T1={}+-{} / ms??".format(popt7[1], np.sqrt(np.diag(cov7))[1]))
     print("C+-∆C={}+-{} ".format(popt7[2], np.sqrt(np.diag(cov7))[2]))
-    print("exponent={} ".format(-dt12[3]/popt7[1]))
+    # print("exponent={} ".format(-dt12[3]/popt7[1]))
     print("RAW-T1-FIT PARAMETERS:")
     print("A+-∆A={}+-{}".format(popt9[0], np.sqrt(np.diag(cov9))[0]))
     print("T1+-∆T1={}+-{} / ms??".format(popt9[1], np.sqrt(np.diag(cov9))[1]))
     print("C+-∆C={}+-{} ".format(popt9[2], np.sqrt(np.diag(cov9))[2]))
-    print("exponent={} ".format(-dt14[3]/popt9[1]))
+    # print("exponent={} ".format(-dt14[3]/popt9[1]))
 
-    # Plot fits from 3 measurement sets:
-    # niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50], c='k',
-    #           x2=np.linspace(0,40,1000), y2=t1fit(np.linspace(0,40,1000), *popt9), 
-    #           x3=dt12, y3=np.asarray(integmagn2), c3='g', c4='g',
-    #           x4=np.linspace(0,40,1000), y4=t1fit(np.linspace(0,40,1000), *popt7), 
-    #           c2='k', plotlabel=r'raw', plotlabel2=r'fit raw', 
-    #           plotlabel3='manualext', plotlabel4='fit manualext',
-    #           ls='',  marker='s', plot2=True, plot3=True, plot4=True, 
-    #           lw2=3, lw4=3, ls3='', marker3='s', 
-    #           xaxis=r'$\Delta$t / ms', yaxis=r'Intensity / $1\times 10^7$', 
-    #           titel=r'Determining the spin-lattice relaxation time  T$_2$', legend=True,
-    #           safefig=True, safename='T1_plotfits',
-    #           xlim=(-0.5,11), ylim=(0.9*min(np.asarray(integmagn4)),
-    #                                 max(np.asarray(integmagn2))+0.5e7), lw7=5,
-    #           plot7=True, x7=np.linspace(0,40,1000), y7=814933 + 403261*(1 - np.exp(-np.linspace(0,40,1000)/0.28384812))
-    #           )
+    # T2-fit-plots
     niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50], c='k', c2='k',
              x2=np.linspace(0,40,1000), y2=t1fit(np.linspace(0,40,1000), *popt9), 
              plotlabel='raw', plotlabel2='fit raw', legend=True,
@@ -338,14 +323,14 @@ def main():
              ls='', marker='s', plot2=True, lw2=3)
     
     niceplot(x=dt12, y=np.asarray(integmagn2), c='k', c2='k',
-             x2=np.linspace(0,10,1000), y2=t1fit(np.linspace(0,10,1000), *popt7), 
-             plotlabel=r'manualext', plotlabel2=r'fit manualext', 
+             x2=np.linspace(0,10,1000), y2=t1fit(np.linspace(0,10,1000), *popt7),
+             plotlabel=r'manualext', plotlabel2=r'fit manualext',
              xlim=(-0.5,11), ylim=(0.9*min(np.asarray(integmagn4)),
                                     max(np.asarray(integmagn2))+0.5e7),
-             ls='', marker='s', plot2=True, lw2=3, 
-             plot3=True, x3=np.linspace(0, 20, 100), y3=4e7+64403261*(1-np.exp(-np.linspace(0, 20, 100)/0.2))
+             ls='', marker='s', plot2=True, lw2=3,
+             #plot3=True, x3=np.linspace(0, 20, 100), y3=4e7+64403261*(1-np.exp(-np.linspace(0, 20, 100)/0.2))
              )
-    
+
     
     """T2-measurement"""
     # # # NTNMR fit: T2= 746.389734 ± 28.430624 mikroseconds
