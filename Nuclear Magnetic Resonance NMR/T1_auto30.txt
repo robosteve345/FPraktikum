@@ -1,6 +1,5 @@
-Data Point Listing of File C:\Documents and Settings\NMR\Desktop\FPraktikum\2021\16122021\T1-first.tnt
-Starting Point:	1	Ending Point:	1024
-Starting 2D Record:	1	Ending Record:	30
+Starting Point: 1 Ending Point:	1024
+Starting 2D Record:	1	Ending Record:	30 
 Real	Imag	Starting 2D Record:	1	Ending Record:	30
 
 14187.000	81336.000	0.000
