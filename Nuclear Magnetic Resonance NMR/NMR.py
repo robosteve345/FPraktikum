@@ -252,13 +252,13 @@ def main():
               plotlabel2='gaussian',
               x3=np.linspace(-100, 100, 1000),
               y3=lorentzian(np.linspace(-100, 100, 1000), *popt2)*1e-6,
-              c3='tab:blue',
+              c3='tab:green',
               plotlabel3='Lorentzian',
               x4=np.linspace(-100, 100, 1000),
               y4=gaussian2(np.linspace(-100, 100, 1000), *popt3)*1e-6,
-              c4='tab:orange',
+              c4='tab:blue',
               plotlabel4='Gaussian',
-              ls='', marker='s', lw2=0.5, lw3=3, lw4=3, ms=5, ls3='-.', ls4='--',
+              ls='', marker='.', lw2=0.5, lw3=2, lw4=2, ms=5, ls3='-.', ls4='--',
               xlim=(-100,100), ylim=(0,2.8)
     )
     # print("Die Parameter des gaussian-Fits sind:")
@@ -314,23 +314,23 @@ def main():
     print("C+-∆C={}+-{} ".format(popt9[2], np.sqrt(np.diag(cov9))[2]))
     # print("exponent={} ".format(-dt14[3]/popt9[1]))
 
-    # T2-fit-plots:
-    niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50], c='k', c2='k',
-             x2=np.linspace(0,40,1000), y2=t1fit(np.linspace(0,40,1000), *popt9), 
+    # T1-fit-plots:
+    niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50]*1e-7, c='k', c2='k',
+             x2=np.linspace(0,40,1000), y2=t1fit(np.linspace(0,40,1000), *popt9)*1e-7,
              plotlabel='raw', plotlabel2='fit raw', legend=True,
-             xlim=(-0.5,11), ylim=(0.9*min(np.asarray(integmagn4)),
-                                    max(np.asarray(integmagn2))+0.5e7),
+             xlim=(-0.5,11), ylim=(0.9*min(np.asarray(integmagn4))*1e-7,
+                                    max(np.asarray(integmagn2))*1e-7+0.5),
              ls='', marker='s', plot2=True, lw2=3,
              xaxis=r'$\Delta$t', yaxis=r'Intensity / $1\times 10^7$',
              titel='Determining the spin-lattice relaxation time $T_1$',
              safefig=True, safename='T2raw'
              )
     
-    niceplot(x=dt12, y=np.asarray(integmagn2), c='k', c2='k',
-             x2=np.linspace(0,10,1000), y2=t1fit(np.linspace(0,10,1000), *popt7),
+    niceplot(x=dt12, y=np.asarray(integmagn2)*1e-7, c='k', c2='k',
+             x2=np.linspace(0,10,1000), y2=t1fit(np.linspace(0,10,1000), *popt7)*1e-7,
              plotlabel=r'manualext', plotlabel2=r'fit manualext',
-             xlim=(-0.5,11), ylim=(0.9*min(np.asarray(integmagn4)),
-                                    max(np.asarray(integmagn2))+0.5e7),
+             xlim=(-0.5,11), ylim=(0.9*min(np.asarray(integmagn4))*1e-7,
+                                    max(np.asarray(integmagn2))*1e-7+0.5),
              ls='', marker='s', plot2=True, lw2=3,
              xaxis=r'$\Delta$t', yaxis=r'Intensity / $1\times 10^7$',
              titel='Determining the spin-lattice relaxation time $T_1$',
