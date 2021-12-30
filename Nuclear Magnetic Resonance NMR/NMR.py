@@ -305,7 +305,7 @@ def main():
              ls='', marker='s', plot2=True, lw2=3,
              xaxis=r'$\Delta$t / $\mu$s', yaxis=r'Intensity / $1\times 10^7$',
              titel='Determining the spin-lattice relaxation time $T_1$',
-             safefig=True, safename='T2raw'
+             safefig=True, safename='T1raw'
              )
     
     niceplot(x=dt12, y=np.asarray(integmagn2)*1e-7, c='k', c2='k',
@@ -316,7 +316,7 @@ def main():
              ls='', marker='s', plot2=True, lw2=3,
              xaxis=r'$\Delta$t / $\mu$s', yaxis=r'Intensity / $1\times 10^7$',
              titel='Determining the spin-lattice relaxation time $T_1$',
-             safefig=True, safename='T2manualext'
+             safefig=True, safename='T1manualext'
              )
 
     
@@ -343,7 +343,7 @@ def main():
               lw=3, lw2=3, lw3=3, lw4=3, lw5=3,
               xaxis=r'', yaxis=r'Intensity / $1\times 10^6$',
               titel=r'Signals in dependence of $\tau$', legend=True,
-              safefig=True, safename='T1plot',
+              safefig=True, safename='T2plot',
               xlim=(0,100), ylim=(0,3.85)
     )
 
