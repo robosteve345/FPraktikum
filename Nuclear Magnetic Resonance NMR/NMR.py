@@ -238,7 +238,6 @@ def main():
               plot2=False, plot3=True, plot4=True,
               x=fres, y=np.sqrt(reres**2+imres**2)*1e-6, c='k',
               plotlabel=r'$\nu_{res}$ = $\,$45.385MHz',
-              #x2=fres, y2=gaussian(fres, *popt1), c2='tab:orange',
               plotlabel2='gaussian',
               x3=np.linspace(-100, 100, 1000),
               y3=lorentzian(np.linspace(-100, 100, 1000), *popt2)*1e-6,
@@ -248,7 +247,7 @@ def main():
               y4=gaussian(np.linspace(-100, 100, 1000), *popt3)*1e-6,
               c4='tab:blue',
               plotlabel4='Gaussian',
-              ls='', marker='.', lw2=0.5, lw3=2, lw4=2, ms=5, ls3='-.', ls4='--',
+              ls='', marker='s', lw2=3, lw3=3, lw4=3,
               xlim=(-100,100), ylim=(0,2.8)
     )
     print("GAUSSIAN PARAMETERS:")
@@ -269,8 +268,6 @@ def main():
     # "T1_manual.txt" -> range(10) (UNBRAUCHBAR)
     # "T1_manualext.txt" -> range(14) (brauchbar)
     # "T1_auto30.txt" -> range(30) (UNBRAUCHBAR, wird gar nicht benutzt)
-    # Bemerkung: habe bei den Dateien 1-2 zeilen txt datei gelöscht, weil python sonst fehler
-    # etc. code anzeigte 
     
     # Import data:
     re12, im12, t12 = np.loadtxt("T1_manualext.txt", usecols=(0,1,2), unpack=True, skiprows=4)
@@ -302,7 +299,7 @@ def main():
     # T1-fit-plots:
     niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50]*1e-7, c='k', c2='k',
              x2=np.linspace(0,40,1000), y2=t1fit(np.linspace(0,40,1000), *popt9)*1e-7,
-             plotlabel='raw', plotlabel2='fit raw', legend=True,
+             plotlabel='experimental data', plotlabel2=r'fit to M$_{sat}$$\cdot$(1 - $\exp$(-$\Delta$ t/T$_1$))', legend=True,
              xlim=(-0.5,10.5), ylim=(0.9*min(np.asarray(integmagn4))*1e-7,
                                     max(np.asarray(integmagn2))*1e-7+0.5),
              ls='', marker='s', plot2=True, lw2=3,
@@ -313,7 +310,7 @@ def main():
     
     niceplot(x=dt12, y=np.asarray(integmagn2)*1e-7, c='k', c2='k',
              x2=np.linspace(0,10,1000), y2=t1fit(np.linspace(0,10,1000), *popt7)*1e-7,
-             plotlabel=r'manualext', plotlabel2=r'fit manualext',
+             plotlabel=r'experimental data', plotlabel2=r'fit to M$_{sat}$ $\cdot$(1 - $\exp$(-$\Delta$ t/T$_1$))', legend=True,
              xlim=(-0.5,10.5), ylim=(0.9*min(np.asarray(integmagn4))*1e-7,
                                     max(np.asarray(integmagn2))*1e-7+0.5),
              ls='', marker='s', plot2=True, lw2=3,
@@ -365,7 +362,7 @@ def main():
               c='k', xaxis=r'$\tau$ / $\mu$s',
               yaxis=r'Intensity / $1\times 10^7$',
               x2=tau, y2=np.asarray(integmagn5)*1e-7, c2='k', ls2='',
-              marker2='s', plotlabel='fit', plotlabel2='experimental data',
+              marker2='s', plotlabel=r'fit to M$_{sat} \cdot$ $\exp$(-$\tau$/T$_2$)', plotlabel2='experimental data',
               legend=True, safefig=True, safename='T2fit',
               titel=r'Determining the Spin-Spin Relaxation time T$_2$',
               ylim=(2, (max(t2fit(tau, *popt5)) + 0.5)*1e-7),
