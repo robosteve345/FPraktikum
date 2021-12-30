@@ -1,3 +1,4 @@
 1. dt14-Array
-2. Achsenbezeichnungen: Intensity, Frequency oder Zeit?
+2. Achsenbezeichnungen: y-Achse: Macht Intensity Sinn? x-Achse: passen die jetzt gesetzten? hatte er nicht gesagt, dass bei x oft gar nichts steht?
 3. T1-Dimension: Soll: T2<T1, bei uns aber T1<T2.: Unsere Werte T2=770 ms, T1=0.7ms???
+4. Gaussian und laurentzian: FWHM einzeichnen um linienbreite zu bestimmen?
