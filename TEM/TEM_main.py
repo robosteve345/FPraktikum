@@ -33,7 +33,7 @@ def real_image(x, intensity, start, ax):
             i_final = i - 1
             break
         i_final = i-1
-    ax.axvspan(peaks[start], peaks[i_final], color = 'green', label='Avaraged area', alpha = 0.7)
+    ax.axvspan(peaks[start], peaks[i_final], color = 'red', label='Avaraged area')
 
     d = (peaks[i_final] - peaks[start]) / (i_final - start)
     print([i_final])
@@ -66,7 +66,7 @@ def plot(ax, x, intensity, intensity_smoothed, peaks, real_image=True):
     else:
         ax.set_xlabel(r"$r$[1/nm]")
     ax.set_ylabel("Intensity")
-    ax.bar(x, intensity, width=max(x)/len(x), color='darkblue')
+    ax.fill_between(x, intensity, ax.get_ylim()[1], alpha=0.7)
     ax.plot(x, intensity, ls='', marker='x', ms=1, label="Measured data", color='blue')
     ax.plot(x_new, intensity_smoothed, ls='--', marker='', label='Smoothed data', color='red')
     ax.vlines(peaks, ax.get_ylim()[0], ax.get_ylim()[1], label='peaks')
@@ -110,7 +110,7 @@ def main():
         plot(ax_real, *datas[i], intensity_real, peaks_real)
         j = j + 1
     print(d_list)
-    ax_real.legend()
+    fig_real.legend()
     save_fig(fig_real, 'analysis_real', size=(14, 6))
     maximum_diff = 16.3
     x_diff = np.linspace(0, maximum_diff, len(intensity_diff))
