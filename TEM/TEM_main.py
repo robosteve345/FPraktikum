@@ -139,7 +139,7 @@ def main():
     for i in d_theo:
         millersum = np.sum(np.array([*i]) ** 2)
         if 1 / d_theo[i] < ax_diff.get_xlim()[1] and millersum not in miller_doubles:
-            ax_diff.text(1 / d_theo[i] + 0.1, 40 - np.sqrt(millersum), str([i[0], i[1], i[2]]), rotation='vertical',
+            ax_diff.text(1 / d_theo[i] + 0.1, 40 - np.sqrt(millersum), "{%d, %d, %d}"%(i), rotation='vertical',
                          color='red')
             ax_diff.axvline(1 / d_theo[i], color='red')
             miller_doubles.append(millersum)
