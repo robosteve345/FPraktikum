@@ -25,15 +25,16 @@ def real_image(x, intensity, start, ax):
     x_new, intensity_smoothed = smoothing(x, intensity)
     peaks = x_new[signal.find_peaks(intensity_smoothed)[0]]
     d = peaks[start] - peaks[start + 1]
-    for i in np.arange(start + 1, len(peaks)-3):
+    for i in np.arange(start + 1, len(peaks) - 3):
         d_new = peaks[i + 1] - peaks[i]
         if d - d_new < 0.25 * d:
-            d = d_new
+            d = (peaks[i] - peaks[start]) / (i - start)  # new distance is average of old distances
         else:
             i_final = i - 1
             break
-        i_final = i-1
-    ax.axvspan(peaks[start], peaks[i_final], color = 'red', label='Avaraged area')
+        i_final = i - 1
+    if ax:
+        ax.axvspan(peaks[start], peaks[i_final], color='red', label='Avaraged area')
 
     d = (peaks[i_final] - peaks[start]) / (i_final - start)
     print([i_final])
@@ -97,39 +98,47 @@ def main():
     d_list = []
     fig_real = plt.figure()
     j = 0
-    starters = [2, 6, 2]
-    for i in [2, 3, 6]:
-
+    starters = [3, 2, 6, 2, 3]
+    for i in [1, 2, 3, 4, 6]:
         rough = data.iloc[:, [2 * i, 2 * i + 1]].copy()  # take pairs of columns, copy them
         rough.dropna(how='any', axis=0, inplace=True)  # remove all non filled rows (headers)
         datas[i] = ([rough.to_numpy(dtype=np.dtype(np.float32))[:, 0],
                      rough.to_numpy(dtype=np.dtype(np.float32))[:, 1]])  # turn it into numpy array
-        ax_real = fig_real.add_subplot(1, 3, j+1)
-        intensity_real, peaks_real, d = real_image(*datas[i], starters[j], ax_real)
+        if j < 3:
+            ax_real = fig_real.add_subplot(1, 3, j + 1)
+            intensity_real, peaks_real, d = real_image(*datas[i], starters[j], ax_real)
+            plot(ax_real, *datas[i], intensity_real, peaks_real, j)
+        else:
+            intensity_real, peaks_real, d = real_image(*datas[i], starters[j], None)
         d_list.append(d)
-        plot(ax_real, *datas[i], intensity_real, peaks_real)
+
         j = j + 1
-    print(d_list)
-    fig_real.legend()
-    save_fig(fig_real, 'analysis_real', size=(14, 6))
+
+    d_list = np.array(d_list)
+    d_avg = np.average(d_list)
+    d_sigma = np.std(d_list, ddof=1)
+    print(d_avg)
+    print(d_sigma)
+    ax_real.legend(loc=1)
+    save_fig(fig_real, 'analysis_real', size=(14, 5))
     maximum_diff = 16.3
     x_diff = np.linspace(0, maximum_diff, len(intensity_diff))
-    """
+
     intensity_smooth, peaks_diff, d_exp, d_theo = diffraction(x_diff, intensity_diff)
     fig_diff = plt.figure()
     ax_diff = fig_diff.subplots()
     plot(ax_diff, x_diff, intensity_diff, intensity_smooth, peaks_diff)
     miller_doubles = []
     for i in d_theo:
-        millersum = np.sum(np.array([*i])**2)
-        if 1/d_theo[i] < ax_diff.get_xlim()[1] and millersum not in miller_doubles:
-            ax_diff.text(1/d_theo[i]+0.1, 40 - np.sqrt(millersum), str(i), rotation='vertical', color='red')
-            ax_diff.axvline(1/d_theo[i], color='red')
+        millersum = np.sum(np.array([*i]) ** 2)
+        if 1 / d_theo[i] < ax_diff.get_xlim()[1] and millersum not in miller_doubles:
+            ax_diff.text(1 / d_theo[i] + 0.1, 40 - np.sqrt(millersum), str(i), rotation='vertical', color='red')
+            ax_diff.axvline(1 / d_theo[i], color='red')
             miller_doubles.append(millersum)
-    #ax_diff.vlines(1/d_theo, ymin=0, ymax=max(intensity_diff)+1, color='red', label='theoretical values')
+    # ax_diff.vlines(1/d_theo, ymin=0, ymax=max(intensity_diff)+1, color='red', label='theoretical values')
     ax_diff.legend()
     save_fig(fig_diff, "differential")
-    """
+
     plt.show()
 
 
