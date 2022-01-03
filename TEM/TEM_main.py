@@ -131,7 +131,7 @@ def main():
     print(peaks_diff)
     fig_diff = plt.figure()
     ax_diff = fig_diff.subplots()
-    plot(ax_diff, x_diff, intensity_diff, intensity_smooth, peaks_diff)
+    plot(ax_diff, x_diff, intensity_diff, intensity_smooth, peaks_diff, real_image=False)
     miller_doubles = []
     for i in d_theo:
         millersum = np.sum(np.array([*i]) ** 2)
