@@ -128,19 +128,35 @@ def main():
     x_diff = np.linspace(0, maximum_diff, len(intensity_diff))
 
     intensity_smooth, peaks_diff, d_exp, d_theo = diffraction(x_diff, intensity_diff)
-    print(peaks_diff)
     fig_diff = plt.figure()
     ax_diff = fig_diff.subplots()
+
     plot(ax_diff, x_diff, intensity_diff, intensity_smooth, peaks_diff, real_image=False)
     miller_doubles = []
+    theo_list = []
+    theo_list_help = np.zeros(13)
+    j = 0
     for i in d_theo:
         millersum = np.sum(np.array([*i]) ** 2)
         if 1 / d_theo[i] < ax_diff.get_xlim()[1] and millersum not in miller_doubles:
-            ax_diff.text(1 / d_theo[i] + 0.1, 40 - np.sqrt(millersum), str([i[0], i[1], i[2]]), rotation='vertical', color='red')
+            ax_diff.text(1 / d_theo[i] + 0.1, 40 - np.sqrt(millersum), "{%d, %d, %d}"%(i), rotation='vertical',
+                         color='red')
             ax_diff.axvline(1 / d_theo[i], color='red')
             miller_doubles.append(millersum)
+            theo_list_help[j] = 1/d_theo[i]
+            theo_list.append([str(i), round(1/d_theo[i], 3), round(d_theo[i],3)])
+            j += 1
     # ax_diff.vlines(1/d_theo, ymin=0, ymax=max(intensity_diff)+1, color='red', label='theoretical values')
+    sorting = np.argsort(theo_list_help)
+    print((np.array(theo_list))[sorting])
+    fig3 = plt.figure()
+    ax3 = fig3.subplots()
+    ax3.vlines(1/peaks_diff, ymin = 0, ymax = 1)
+    ax3.vlines(1/theo_list_help, ymin = 0, ymax = 1, color = "red")
     ax_diff.legend()
+    df1 = pd.DataFrame(data=[peaks_diff, d_exp]).T
+    df2 = pd.DataFrame(data=np.array(theo_list)[sorting])
+    print(df2.to_latex(index=False))
     save_fig(fig_diff, "differential")
     plt.show()
 
