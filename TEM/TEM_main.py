@@ -93,7 +93,7 @@ def isfull(x):
 
 def main():
     intensity_diff = np.genfromtxt("BeugungProfile Of Au_difrf3Pol.txt", skip_header=0, unpack=False)  # read stuff
-    """
+
     data = pd.read_excel("datahighresolution.xlsx", usecols=isfull)
     data.dropna(how='all', axis=1, inplace=True)  # remove non-filled columns between useful ones
     datas = {}
@@ -109,7 +109,7 @@ def main():
         if j < 3:
             ax_real = fig_real.add_subplot(1, 3, j + 1)
             intensity_real, peaks_real, d = real_image(*datas[i], starters[j], ax_real)
-            plot(ax_real, *datas[i], intensity_real, peaks_real, j)
+            plot(ax_real, *datas[i], intensity_real, peaks_real)
         else:
             intensity_real, peaks_real, d = real_image(*datas[i], starters[j], None)
         d_list.append(d)
@@ -123,7 +123,7 @@ def main():
     df = pd.DataFrame(d_list)
     ax_real.legend(loc=1)
     save_fig(fig_real, 'analysis_real', size=(14, 5))
-    """
+
     maximum_diff = 17.4875
     x_diff = np.linspace(0, maximum_diff, len(intensity_diff))
 
