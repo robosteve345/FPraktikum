@@ -129,7 +129,7 @@ def t1fit(x, A, T1, C):
         A : integer, M_{sat}
         T1 : integer, spin-lattice-relaxation time in seconds
         """
-        return A*(1 - np.exp(-x/T1)) + C 
+        return A*(1 - np.exp(-x/T1)) + C
     
 
 def t2fit(x, A, T2, B):
@@ -202,28 +202,34 @@ def main():
     re458, im458, f458 = np.loadtxt("458.txt", unpack=True, skiprows=n, usecols=(0,1,2))
     re46, im46, f46 = np.loadtxt("46.txt", unpack=True, skiprows=n, usecols=(0,1,2))
     reres, imres, fres = np.loadtxt("resonance.txt", unpack=True, skiprows=n, usecols=(0,1,2))
-    print(np.logspace(0.01, 10, 13))
+    print("frequencymax={},{},{},{},{},{},{}".format(np.max(np.sqrt(re45**2+im45**2)),
+    np.max(np.sqrt(re452**2+im452**2)),
+    np.max(np.sqrt(reres**2+imres**2)),
+    np.max(np.sqrt(re454**2+im454**2)),
+    np.max(np.sqrt(re456**2+im456**2)),
+    np.max(np.sqrt(re458**2+im458**2)),
+    np.max(np.sqrt(re46**2+im46**2))))
     # Plot all the different frequency measurements
-    niceplot(x=f45, y=np.sqrt(re45**2+im45**2)*1e-6, c="tab:blue",
-              plotlabel=r'$\nu_{res}$ = $\,$45MHz', legend=True,
-              plot2=True, plot3=True, plot4=True, plot5=True, plot6=True,
-              plot7=True, xaxis=r'$\Delta \nu$ / kHz', yaxis=r'Intensity / $\times 10^6$',
-              titel=r'Determining the larmor frequency $\omega_L$',
-              x2=f452, y2=np.sqrt(re452**2+im452**2)*1e-6, c2="tab:orange",
-              safefig=True, safename='frequencies', plotlabel2=r'$\nu_{res}$ = $\,$45.2MHz',
-              x4=f454, y4=np.sqrt(re454**2+im454**2)*1e-6, c4="tab:pink",
-              plotlabel4=r'$\nu_{res}$ = $\,$45.4MHz',
-              x5=f456, y5=np.sqrt(re456**2+im456**2)*1e-6, c5="tab:red",
-              plotlabel5=r'$\nu_{res}$ = $\,$45.6MHz',
-              x6=f458, y6=np.sqrt(re458**2+im458**2)*1e-6, c6="tab:purple",
-              plotlabel6=r'$\nu_{res}$ = $\,$45.8MHz',
-              x7=f46, y7=np.sqrt(re46**2+im46**2)*1e-6, c7="tab:brown",
-              plotlabel7=r'$\nu_{res}$ = $\,$46MHz',
-              x3=fres, y3=np.sqrt(reres**2+imres**2)*1e-6, c3="tab:green",
-              plotlabel3=r'$\nu_{res}$ = 45.385MHz', xlim=(-650, 650),
-              lw=3, lw2=3, lw3=3, lw4=3, lw5=3, lw6=3, lw7=3, fs=16,
-              ylim=(0,2.8)
-    )
+    # niceplot(x=f45, y=np.sqrt(re45**2+im45**2)*1e-6, c="tab:blue",
+    #           plotlabel=r'$\nu_{res}$ = $\,$45MHz', legend=True,
+    #           plot2=True, plot3=True, plot4=True, plot5=True, plot6=True,
+    #           plot7=True, xaxis=r'$\Delta \nu$ / kHz', yaxis=r'Intensity / $\times 10^6$',
+    #           titel=r'Determining the larmor frequency $\omega_L$',
+    #           x2=f452, y2=np.sqrt(re452**2+im452**2)*1e-6, c2="tab:orange",
+    #           safefig=True, safename='frequencies', plotlabel2=r'$\nu_{res}$ = $\,$45.2MHz',
+    #           x4=f454, y4=np.sqrt(re454**2+im454**2)*1e-6, c4="tab:pink",
+    #           plotlabel4=r'$\nu_{res}$ = $\,$45.4MHz',
+    #           x5=f456, y5=np.sqrt(re456**2+im456**2)*1e-6, c5="tab:red",
+    #           plotlabel5=r'$\nu_{res}$ = $\,$45.6MHz',
+    #           x6=f458, y6=np.sqrt(re458**2+im458**2)*1e-6, c6="tab:purple",
+    #           plotlabel6=r'$\nu_{res}$ = $\,$45.8MHz',
+    #           x7=f46, y7=np.sqrt(re46**2+im46**2)*1e-6, c7="tab:brown",
+    #           plotlabel7=r'$\nu_{res}$ = $\,$46MHz',
+    #           x3=fres, y3=np.sqrt(reres**2+imres**2)*1e-6, c3="tab:green",
+    #           plotlabel3=r'$\nu_{res}$ = 45.385MHz', xlim=(-650, 650),
+    #           lw=3, lw2=3, lw3=3, lw4=3, lw5=3, lw6=3, lw7=3, fs=16,
+    #           ylim=(0,2.8)
+    # )
 
     # Generate parameters and errors for both pulse signals
     popt3, cov3 = fit(gaussian, fres, np.sqrt(reres**2+imres**2), sigma=None,
@@ -269,46 +275,47 @@ def main():
     
     """Part 2"""
     """T1-measurement"""
-    
     # Import data:
     re12, im12, t12 = np.loadtxt("T1_manualext.txt", usecols=(0,1,2), unpack=True, skiprows=4)
     dt12, k12 = np.loadtxt("T1_manualext_fit.txt", usecols=(0,1), unpack=True, skiprows=3)
+    re14, im14, t14 = np.loadtxt("T1_raw.txt", usecols=(0,1,2), unpack=True, skiprows=4)
+    dt14=np.linspace(0,10000,100)
+    dt12=dt12*1e3
     print("dt = {}".format(dt12))
     # Compute integrals:
     x2, magn2, integmagn2 = intensityintegral(re12, im12, t12, n=1024, m=14)
-
+    x4, magn4, integmagn4 = intensityintegral(re14, im14, t14, n=1024, m=100)
     # Obtain fit-parameters for each 3 measurement sets:
-    popt7, cov7 = fit(t1fit, dt12[0:-2], integmagn2[0:-2], p0=[2e7, 0.9, 2e7],
+    popt7, cov7 = fit(t1fit, dt12, integmagn2, p0=[2e7, 300, 2e7],
                       sigma=None, absolute_sigma=True)
-    popt9, cov9 = fit(t1fit, dt14[0:50], integmagn4[0:50], p0=[1e7, 0.9, 1],
-                      sigma=None, absolute_sigma=True)
-
+    # popt9, cov9 = fit(t1fit, dt14[0:50], integmagn4[0:50], p0=[1e7, 300, 1e7],
+    #                   sigma=None, absolute_sigma=True)
     # Fit parameters for spin-lattice relaxation time T1:
     print("MANUALEXT-T1-FIT PARAMETERS:")
     print("A+-∆A={}+-{}".format(popt7[0], np.sqrt(np.diag(cov7))[0]))
     print("T1+-∆T1={}+-{} / microseconds".format(popt7[1], np.sqrt(np.diag(cov7))[1]))
     print("C+-∆C={}+-{} ".format(popt7[2], np.sqrt(np.diag(cov7))[2]))
-    print("RAW-T1-FIT PARAMETERS:")
-    print("A+-∆A={}+-{}".format(popt9[0], np.sqrt(np.diag(cov9))[0]))
-    print("T1+-∆T1={}+-{} / microseconds".format(popt9[1], np.sqrt(np.diag(cov9))[1]))
-    print("C+-∆C={}+-{} ".format(popt9[2], np.sqrt(np.diag(cov9))[2]))
+    # print("RAW-T1-FIT PARAMETERS:")
+    # print("A+-∆A={}+-{}".format(popt9[0], np.sqrt(np.diag(cov9))[0]))
+    # print("T1+-∆T1={}+-{} / microseconds".format(popt9[1], np.sqrt(np.diag(cov9))[1]))
+    # print("C+-∆C={}+-{} ".format(popt9[2], np.sqrt(np.diag(cov9))[2]))
 
     # T1-fit-plots:
-    niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50]*1e-7, c='k', c2='k',
-             x2=np.linspace(0,40,1000), y2=t1fit(np.linspace(0,40,1000), *popt9)*1e-7,
-             plotlabel='experimental data', plotlabel2=r'fit to A$\cdot$(1 - $\exp$(-$\Delta$ t/T$_1$)) + B', legend=True,
-             xlim=(-0.5,10.5), ylim=(0.9*min(np.asarray(integmagn4))*1e-7,
-                                    max(np.asarray(integmagn2))*1e-7+0.5),
-             ls='', marker='s', plot2=True, lw2=3,
-             xaxis=r'$\Delta$t / $\mu$s', yaxis=r'Intensity / $1\times 10^7$',
-             titel='Determining the spin-lattice relaxation time $T_1$',
-             safefig=True, safename='T1raw'
-             )
+    # niceplot(x=dt14[0:50], y=np.asarray(integmagn4)[0:50]*1e-7, c='k', c2='k',
+    #          x2=np.linspace(0,10000,1000), y2=t1fit(np.linspace(0,10000,1000), *popt9)*1e-7,
+    #          plotlabel='experimental data', plotlabel2=r'fit to $I_{echo,1}$$\cdot$(1 - $\exp$(-$\Delta$ t/T$_1$)) + $I_{0,1}$', legend=True,
+    #          xlim=(-200,10200), ylim=(0.9*min(np.asarray(integmagn4))*1e-7,
+    #                                 max(np.asarray(integmagn2))*1e-7+0.5),
+    #          ls='', marker='s', plot2=True, lw2=3,
+    #          xaxis=r'$\Delta$t / $\mu$s', yaxis=r'Intensity / $1\times 10^7$',
+    #          titel='Determining the spin-lattice relaxation time $T_1$',
+    #          safefig=True, safename='T1raw'
+    #          )
 
     niceplot(x=dt12, y=np.asarray(integmagn2)*1e-7, c='k', c2='k',
-             x2=np.linspace(0,10,1000), y2=t1fit(np.linspace(0,10,1000), *popt7)*1e-7,
-             plotlabel=r'experimental data', plotlabel2=r'fit to A$\cdot$(1 - $\exp$(-$\Delta$ t/T$_1$)) + B', legend=True,
-             xlim=(-0.5,10.5), ylim=(0.9*min(np.asarray(integmagn4))*1e-7,
+             x2=np.linspace(0,10000,1000), y2=t1fit(np.linspace(0,10000,1000), *popt7)*1e-7,
+             plotlabel=r'experimental data', plotlabel2=r'fit to $I_{echo,1}$$\cdot$(1 - $\exp$(-$\Delta$t/T$_1$)) + $I_{0,1}$', legend=True,
+             xlim=(-200,10000), ylim=(0.9*min(np.asarray(integmagn4))*1e-7,
                                     max(np.asarray(integmagn2))*1e-7+0.5),
              ls='', marker='s', plot2=True, lw2=3,
              xaxis=r'$\Delta$t / $\mu$s', yaxis=r'Intensity / $1\times 10^7$',
@@ -328,21 +335,21 @@ def main():
     x5, magn5, integmagn5 = intensityintegral(re2, im2, t2, 512, 12)
 
     # Plot for various tau (5 chosen spread values) (not mandatory):
-    niceplot(x=x5[0], y=magn5[0]*1e-6, c5='tab:blue',
-              x2=x5[2], y2=magn5[2]*1e-6, c4='tab:orange',
-              x3=x5[5], y3=magn5[5]*1e-6, c3='tab:green',
-              x4=x5[8], y4=magn5[8]*1e-6, c2='tab:red',
-              x5=x5[11], y5=magn5[11]*1e-6, c='tab:purple',
-              plotlabel=r'$\tau=11\,\mu$s', plotlabel2=r'$\tau=48\,\mu$s',
-              plotlabel3=r'$\tau=151\,\mu$s', plotlabel4=r'$\tau=468\,\mu$s',
-              plotlabel5=r'$\tau=1000\,\mu$s',
-              plot2=True, plot3=True, plot4=True, plot5=True,
-              lw=3, lw2=3, lw3=3, lw4=3, lw5=3,
-              xaxis=r'', yaxis=r'Intensity / $1\times 10^6$',
-              titel=r'Signals in dependence of $\tau$', legend=True,
-              safefig=True, safename='T2plot',
-              xlim=(0,100), ylim=(0,3.85)
-    )
+    # niceplot(x=x5[0], y=magn5[0]*1e-6, c5='tab:blue',
+    #           x2=x5[2], y2=magn5[2]*1e-6, c4='tab:orange',
+    #           x3=x5[5], y3=magn5[5]*1e-6, c3='tab:green',
+    #           x4=x5[8], y4=magn5[8]*1e-6, c2='tab:red',
+    #           x5=x5[11], y5=magn5[11]*1e-6, c='tab:purple',
+    #           plotlabel=r'$\tau=11\,\mu$s', plotlabel2=r'$\tau=48\,\mu$s',
+    #           plotlabel3=r'$\tau=151\,\mu$s', plotlabel4=r'$\tau=468\,\mu$s',
+    #           plotlabel5=r'$\tau=1000\,\mu$s',
+    #           plot2=True, plot3=True, plot4=True, plot5=True,
+    #           lw=3, lw2=3, lw3=3, lw4=3, lw5=3,
+    #           xaxis=r'', yaxis=r'Intensity / $1\times 10^6$',
+    #           titel=r'Signals in dependence of $\tau$', legend=True,
+    #           safefig=True, safename='T2plot',
+    #           xlim=(0,100), ylim=(0,3.85)
+    # )
 
     # Fit parameters for spin-spin relaxation time T2 from the
     # integrated signals:
@@ -354,20 +361,24 @@ def main():
     print("A+-∆A={}+-{}".format(popt5[0], np.sqrt(np.diag(cov5))[0]))
     print("T2+-∆T2={}+-{} / microeconds".format(popt5[1], np.sqrt(np.diag(cov5))[1]))
     print("B+-∆B={}+-{} ".format(popt5[2], np.sqrt(np.diag(cov5))[2]))
-    niceplot(x=np.linspace(0,1050, 1050),
-              y=t2fit(np.linspace(0,1050, 1050), *popt5)*1e-7, lw=3,
-              c='k', xaxis=r'$\tau$ / $\mu$s',
-              yaxis=r'Intensity / $1\times 10^7$',
-              x2=tau, y2=np.asarray(integmagn5)*1e-7, c2='k', ls2='',
-              marker2='s', plotlabel=r'fit to A$\cdot$ $\exp$(-$\tau$/T$_2$) + B', plotlabel2='experimental data',
-              legend=True, safefig=True, safename='T2fit',
-              titel=r'Determining the Spin-Spin Relaxation time T$_2$',
-              ylim=(2, (max(t2fit(tau, *popt5)) + 0.5)*1e-7),
-              xlim=(0,1050), plot2=True, ls='-.'
-     )
-
+    # niceplot(x=np.linspace(0,1050, 1050),
+    #           y=t2fit(np.linspace(0,1050, 1050), *popt5)*1e-7, lw=3,
+    #           c='k', xaxis=r'$\tau$ / $\mu$s',
+    #           yaxis=r'Intensity / $1\times 10^7$',
+    #           x2=tau, y2=np.asarray(integmagn5)*1e-7, c2='k', ls2='',
+    #           marker2='s', plotlabel=r'fit to $I_{echo,2}$$\cdot$ $\exp$(-$\tau$/T$_2$) + $I_{0,2}$', plotlabel2='experimental data',
+    #           legend=True, safefig=True, safename='T2fit',
+    #           titel=r'Determining the Spin-Spin Relaxation time T$_2$',
+    #           ylim=(2, (max(t2fit(tau, *popt5)) + 0.5)*1e-7),
+    #           xlim=(0,1050), plot2=True, ls='-.'
+    #  )
+    print("T2 <! 2*T1: {} < {}".format(popt5[1], 2 * popt7[1]))
     plt.show()
-    
-    
+
+    """Preliminary experiment"""
+    print("initial L={} Henry".format(1/(4*np.pi**2*5e-12*(1e6)**2)))
+    print("b0={} Tesla".format(45.385/(0.1812*7.622593285)))
+    print("N={}".format(np.sqrt((0.00506605918211689*(0.016+2*0.0025/2.2))/(2e5*4*np.pi*1e-7*np.pi*(0.0025)**2))))
+
 if __name__ == "__main__":
     main()
