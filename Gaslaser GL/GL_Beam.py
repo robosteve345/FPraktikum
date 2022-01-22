@@ -35,23 +35,23 @@ def read_files(path):
         mess = pd.read_csv(i, encoding_errors='ignore', delimiter=';')
         mess = mess.to_numpy()
         mess_ind = np.indices(np.shape(mess))
-
+        # Daten finden
         y_index1_r = mess_ind[0][mess == 'FWHM vert']
         y_index1_c = mess_ind[1][mess == 'FWHM vert'] + 1
-        y_data1 = mess[y_index1_r, y_index1_c]
-        y_data1 = y_data1[~np.isnan(y_data1.astype(float))]
+        y_data1 = mess[y_index1_r, y_index1_c][~np.isnan(mess[y_index1_r, y_index1_c].astype(float))]
         y_index2_r = mess_ind[0][mess == 'FWHM horiz']
         y_index2_c = mess_ind[1][mess == 'FWHM horiz'] + 1
-        y_data2 = mess[y_index2_r, y_index2_c]
-        y_data = np.append(y_data1, y_data2[~np.isnan(y_data2.astype(float))])
+        y_data2 = mess[y_index2_r, y_index2_c][~np.isnan(mess[y_index2_r, y_index2_c].astype(float))]
+        # Durchschnitt bilden
+        y_data = np.mean([y_data1, y_data2])/np.sqrt(2*np.log(2))*5.6e-3
+        s_y = np.abs(y_data1 - y_data2)[0]/2/np.sqrt(2*np.log(2))*5.6e-3
+        data = np.append(data, [x_data, y_data, s_y])
 
-        y_data = np.mean(y_data)/np.sqrt(2*np.log(2))*5.6e-3
-        data = np.append(data, [x_data, y_data])
-
-    data = np.reshape(data, (len(names), 2))
+    data = np.reshape(data, (len(names), 3))
     x_data = data[:, 0]
     y_data = data[:, 1]
-    return x_data, y_data
+    s_y = data[:, 2]
+    return x_data, y_data, s_y
 
 def pinmp_ticks(axis, ticks):
     axis.set_major_locator(ticker.MaxNLocator(ticks))
@@ -79,20 +79,21 @@ def save_fig(fig, title, folder='unsorted', size=(5, 4)):
     fig.savefig(f'{title}.svg')
 
 def main():
-    x_data, y_data = read_files("Kaustik")
+    x_data, y_data, s_y = read_files("Kaustik")
     marker = 'x'
     dist = 750
     lam = 632.8e-6
     print(lam)
     kaustik_lam = functools.partial(kaustik, lam=lam)
     kaustik_free = functools.partial(kaustik, lam=lam, x=0, f=np.inf)
-    params = curve_fit(kaustik_lam, x_data, y_data, p0=[0.002, 150, 750])[0]
+    params, pcov = curve_fit(kaustik_lam, x_data, y_data, p0=[0.002, 150, 750], sigma=s_y, absolute_sigma=True)
     print(params)
+    print(np.sqrt(np.diag(pcov)))
     dist = params[-1]
     plot_x = np.linspace(0, max(x_data), 100)
     fig1, ax1 = set_up_plot()
 
-    ax1.errorbar(x_data + dist, y_data, ls='', marker=marker, xerr=5, label='Experimentelle Daten', c='tab:blue')
+    ax1.errorbar(x_data + dist, y_data, ls='', marker=marker, xerr=5, yerr=s_y, label='Experimentelle Daten', c='tab:blue')
     ax1.plot(plot_x+params[-1], kaustik_lam(plot_x, *params), color='tab:red', label='Gefitteter Theoretischer Verlauf')
     ax1.plot(np.linspace(0, params[-1]), kaustik_free(s=np.linspace(0, params[-1]), b=params[0]), color='tab:red')
     ax1.set_ylabel(r'$\omega^\prime$/mm')
