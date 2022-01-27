@@ -108,7 +108,7 @@ p2 = np.array(
     [2.464e-6, 30.9e-6, 110e-6, 25.3e-6, 102e-6, 0.399e-3, 0.744e-3, 0.858e-3, 0.972e-3, 1.02e-3, 0.994e-3, 0.907e-3])
 sigma2 = np.array([24e-9, 0.117e-6, 0.6e-6, 0.19e-6, 6.54e-6, 1.1e-3, 3.7e-3, 3.7e-3, 3 - 2e-3, 2.4e-3, 2.3e-3, 2.0e-3])
 plt.plot(phi, p2, ls='', marker='x')
-# niceplot(x=phi, y=p2, yerr=sigma2, c='tab:blue', error=True)
+niceplot(x=phi, y=p2, yerr=sigma2, c='tab:blue', error=True, size=(10,10))
 
 """
 Kommerzieller HeNe-Laser Modenbetrachtung
@@ -120,7 +120,7 @@ niceplot(x=t1, y=I1, x2=t2, y2=I2, plotlabel='Mit Polarisierung', safefig=False,
          plotlabel2='Ohne Polarisierung', titel='')
 
 """
-Kommerzieller HeNe-Laser Modenbetrachtung
+Kommerzieller HeNe-Laser Modenbetrachtung, versch. Resonatorlänge
 """
 t3, I3 = np.loadtxt('4peak.txt', usecols=(0, 1), unpack=True, skiprows=5)
 t4, I4 = np.loadtxt('4peak2.txt', usecols=(0, 1), unpack=True, skiprows=5)
