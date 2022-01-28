@@ -8,6 +8,35 @@ from praktikum import niceplot
 """
 Auswertung FPraktikum Gaslaser, Fabry-Perot-Interferometer
 """
+# Determine background noise of the measured signals
+def noisecalc(x, limit):
+    """
+    :parameters:
+    x: data
+    limit: up to which value data is sconsidered noise
+    :returns: mean noise value
+    """
+    noise = []
+    for i in x:
+        if i < limit:
+            noise.append(i)
+        else:
+            i =+ 1
+    return np.mean(np.asarray(noise))
+
+
+def gaussian(x, A, mu, sigma):
+    """Gauss-function with arbitrary amplitude A (not normed).
+    Parameters
+    ----------
+    x : array.
+    A : integer, amplitude.
+    mu : integer, expectation value.
+    sigma : integer, standard deviation.
+    B: noise
+    """
+    return A*np.exp(-(x-mu)**2/(2*sigma**2))
+
 
 """
 Faserspektrum
@@ -38,30 +67,22 @@ Hemisphärischer Resonator: Ausgangsleistung mit Polarisator (Malus law)
 """
 Kommerzieller HeNe-Laser Modenbetrachtung
 """
-def gaussian(x, A, mu, sigma):
-    """Gauss-function with arbitrary amplitude A (not normed).
-    Parameters
-    ----------
-    x : array.
-    A : integer, amplitude.
-    mu : integer, expectation value.
-    sigma : integer, standard deviation.
-    B: noise
-    """
-    return A*np.exp(-(x-mu)**2/(2*sigma**2))
-
-
 # Daten einlesen
 t1, I1 = np.loadtxt('mitPol.txt', usecols=(0, 1), unpack=True, skiprows=4)
 t2, I2 = np.loadtxt('ohnePol.txt', usecols=(0, 1), unpack=True, skiprows=4)
 # get peaks for gaussian fit
 indices1, parameters1 = find_peaks(I1, height=50)
 indices2, parameters2 = find_peaks(I2, height=50)
-# niceplot(x=t1[indices1], y=I1[indices1],
-#          x2=t1, y2=I1, c='tab:red', c2='tab:blue',
-#          plot2=True, ls='', marker='x', plotlabel='peaks', plotlabel2='Polarisationswinkel $\Theta=\pi/2$',
-#          titel='Modenbetrachtung des kommerziellen HeNe-Lasers', legend=True,
-#          xaxis='time', yaxis='intensity', size=(10,5))
+# get noise
+noise1 = noisecalc(I1, 3)
+noise2 = noisecalc(I2, 8)
+niceplot(x=t1[indices1], y=I1[indices1] - noise1,
+         x2=t1, y2=I1 - noise1, c='tab:red', c2='tab:blue',
+         plot2=True, ls='', marker='x', plotlabel='peaks', plotlabel2='Polarisationswinkel $\Theta=\pi/2$',
+         titel='Modenbetrachtung des kommerziellen HeNe-Lasers', legend=True,
+         xaxis='time', yaxis='intensity', size=(10,5),
+         plot3=True, x3=t2, y3=I2 - noise2, c3='tab:green', plotlabel3='Polarisationswinkel $\Theta=2\pi$',
+         plot4=True, x4=t2[indices2], y4=I2[indices2] - noise2, ls4='', marker4='x', c4='tab:red')
 # niceplot(x=t2[indices2], y=I2[indices2],
 #          x2=t2, y2=I2, c='tab:red', c2='tab:blue',
 #          plot2=True, ls='', marker='x', plotlabel='peaks', plotlabel2='Polarisationswinkel $\Theta=2\pi$',
@@ -80,20 +101,8 @@ t5, I5 = np.loadtxt('4peak61.txt', usecols=(0, 1), unpack=True, skiprows=5)
 # indices3, parameters3 = find_peaks(I3, height=25) schlechte daten
 indices4, parameters4 = find_peaks(I4, height=40, distance=16)
 indices5, parameters5 = find_peaks(I5, height=40, distance=16)
-
-
-# Deduce noise from the signals
-def noisecalc(x, limit):
-    noise = []
-    for i in x:
-        if i < limit:
-            noise.append(i)
-        else:
-            i =+ 1
-    return np.mean(np.asarray(noise))
-
-noise4, noise5 = noisecalc(I4, 30), noisecalc(I5, 30) # get noise
-print(noise4, noise5)
+# estimate noise
+noise4, noise5 = noisecalc(I4, 30), noisecalc(I5, 30)
 # Gauss-fits
 # popt3, cov3 = fit(gaussian, t3[indices3], I3[indices3] # schlechte daten
                  # )
@@ -113,16 +122,14 @@ print("GAUSSIAN PARAMETERS41:")
 print("A+-∆A={}+-{}".format(popt41[0], np.sqrt(np.diag(cov41))[0]))
 print("mu+-∆mu={}+-{}".format(popt41[1], np.sqrt(np.diag(cov41))[1]))
 print("sigma+-∆sigma={}+-{}".format(popt41[2], np.sqrt(np.diag(cov41))[2]))
-# print("B+-∆B={}+-{}".format(popt41[3], np.sqrt(np.diag(cov41))[3]))
-print("The gaussian-line-with is: ∆tau +-dtau = {}+-{}".format(2 * np.sqrt(2 * np.log(2)) * popt41[2],
+print("The gaussian-line-width is: ∆tau +-dtau = {}+-{}".format(2 * np.sqrt(2 * np.log(2)) * popt41[2],
                                                                2 * np.sqrt(2 * np.log(2)) *
                                                                np.sqrt(np.diag(cov41))[2]))
 print("GAUSSIAN PARAMETERS42:")
 print("A+-∆A={}+-{}".format(popt42[0], np.sqrt(np.diag(cov42))[0]))
 print("mu+-∆mu={}+-{}".format(popt42[1], np.sqrt(np.diag(cov42))[1]))
 print("sigma+-∆sigma={}+-{}".format(popt42[2], np.sqrt(np.diag(cov42))[2]))
-# print("B+-∆B={}+-{}".format(popt42[3], np.sqrt(np.diag(cov42))[3]))
-print("The gaussian-line-with is: ∆tau +-dtau = {}+-{}".format(2 * np.sqrt(2 * np.log(2)) * popt42[2],
+print("The gaussian-line-width is: ∆tau +-dtau = {}+-{}".format(2 * np.sqrt(2 * np.log(2)) * popt42[2],
                                                                2 * np.sqrt(2 * np.log(2))  *
                                                                np.sqrt(np.diag(cov42))[2]))
 
@@ -130,14 +137,14 @@ print("GAUSSIAN PARAMETERS51:")
 print("A+-∆A={}+-{}".format(popt51[0], np.sqrt(np.diag(cov51))[0]))
 print("mu+-∆mu={}+-{}".format(popt51[1], np.sqrt(np.diag(cov51))[1]))
 print("sigma+-∆sigma={}+-{}".format(popt51[2], np.sqrt(np.diag(cov51))[2]))
-print("The gaussian-line-with is: ∆tau +-dtau = {}+-{}".format(2 * np.sqrt(2 * np.log(2)) * popt51[2],
+print("The gaussian-line-width is: ∆tau +-dtau = {}+-{}".format(2 * np.sqrt(2 * np.log(2)) * popt51[2],
                                                                2 * np.sqrt(2 * np.log(2)) *
                                                                np.sqrt(np.diag(cov51))[2]))
 print("GAUSSIAN PARAMETERS52:")
 print("A+-∆A={}+-{}".format(popt52[0], np.sqrt(np.diag(cov52))[0]))
 print("mu+-∆mu={}+-{}".format(popt52[1], np.sqrt(np.diag(cov52))[1]))
 print("sigma+-∆sigma={}+-{}".format(popt52[2], np.sqrt(np.diag(cov52))[2]))
-print("The gaussian-line-with is: ∆tau +-dtau = {}+-{}".format(2 * np.sqrt(2 * np.log(2)) * popt52[2],
+print("The gaussian-line-width is: ∆tau +-dtau = {}+-{}".format(2 * np.sqrt(2 * np.log(2)) * popt52[2],
                                                                2 * np.sqrt(2 * np.log(2)) *
                                                                np.sqrt(np.diag(cov52))[2]))
 # Plot
