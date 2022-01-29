@@ -154,13 +154,13 @@ def main():
     center_axis(ax3, fig3)
     hyperbola(stab_plot_x_r, ax3)
     hyperbola(-stab_plot_x_r, ax3)
-    ax3.hlines(1, 0, 1, color='tab:red', label='Arbeitsbereich')
+    ax3.vlines(1, 0, 1, color='tab:red', label='Arbeitsbereich')
     ax3.set_ylabel(r"$g_2$", labelpad=0, loc='top')
     ax3.set_xlabel(r"$g_1$", labelpad=0, loc='right')
     ax3.set_ylim(-4.5, 4.5)
     ax3.set_xlim(-4.5, 4.5)
     ax3.legend()
-    save_fig(fig3, "stabilität", size=(5,5))
+    save_fig(fig3, "stab", size=(5,5))
     plt.show()
 
 if __name__ == "__main__":
