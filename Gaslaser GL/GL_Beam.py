@@ -161,6 +161,16 @@ def main():
     ax3.set_xlim(-4.5, 4.5)
     ax3.legend()
     save_fig(fig3, "stab", size=(5,5))
+
+    L = np.array([63.3 , 69.8 , 79.5 , 89.3 , 95.6 , 100.5])
+    P = np.array([1.23 , 1.2 , 1.32 , 1.17 , 0.877 , 0.128])
+    sigma = np.array([2.8 , 3.2 , 4.8 , 3 , 2.6 , 1.8])/1000
+    fig4, ax4 = set_up_plot()
+    ax4.errorbar(L, P, yerr=sigma, xerr=0.5, marker='x', ls='',label='Messpunkte')
+    ax4.set_xlabel(r'$L$/cm')
+    ax4.set_ylabel(r'$P$/mW')
+    ax4.legend()
+    save_fig(fig4, 'leistung')
     plt.show()
 
 if __name__ == "__main__":
