@@ -24,7 +24,7 @@ def kaustik(x, b, s, f, lam):
     return np.sqrt(lam/(np.pi*b_p))
 
 def malus(x, a, b):
-    return a*np.cos(x + b)**2
+    return a*np.cos(x - b)**2
 
 def read_files(path):
     names = glob.glob(f"{Path().resolve()}\{path}\*.csv")
@@ -135,12 +135,14 @@ def main():
          0.907e-3])*1000
     sigma2 = np.array([24e-9, 0.117e-6, 0.6e-6, 0.19e-6, 6.54e-6, 1.1e-6, 3.7e-6, 3.7e-6, 3.2e-6, 2.4e-6, 2.3e-6, 2.0e-6])*1000
     fig2, ax2 = set_up_plot()
-
-    params2 = curve_fit(malus, phi, p2, sigma=sigma2, absolute_sigma=True)[0]
+    dfmalus = pd.DataFrame(dict(phi=phi, P=p2, sigma=sigma2))
+    print(dfmalus.to_latex(index=False))
+    params2, pcov2 = curve_fit(malus, phi, p2, sigma=sigma2, absolute_sigma=True)
     ax2.errorbar(phi, p2, yerr=sigma2,xerr=2/360*2*np.pi, ls='',marker=marker, label='Experimentelle Daten', c='tab:blue')
     plot_phi = np.linspace(min(phi), max(phi))
     print(params2)
-    ax2.plot(plot_phi, malus(plot_phi, *params2), color='tab:red', label=r'Fit an Malus Gesetz: $I=I_0\cos(\phi)$')
+    print(np.sqrt(np.diag(pcov2)))
+    ax2.plot(plot_phi, malus(plot_phi, *params2), color='tab:red', label=r'Fit an Malus Gesetz: $I=I_0\cos^2(\phi)$')
     ax2.set_xlabel(r'$\phi$/rad')
     ax2.set_ylabel(r'$I$/mW')
     ax2.set_title('Malus Gesetz anhand des Laserlichtes')
