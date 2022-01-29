@@ -7,6 +7,7 @@ import pandas as pd
 from scipy.optimize import curve_fit
 import functools
 from matplotlib import ticker
+import matplotlib
 
 # Plot stuff
 plt.style.use('ggplot')
@@ -70,6 +71,34 @@ def set_up_plot(ticks=10):
 
     return fig, ax
 
+def center_axis(ax, fig):
+    # Move left y-axis and bottim x-axis to centre, passing through (0,0)
+    ax.spines['left'].set_position('center')
+    ax.spines['bottom'].set_position('center')
+
+    # Eliminate upper and right axes
+    ax.spines['right'].set_color('none')
+    ax.spines['top'].set_color('none')
+
+    # Show ticks in the left and lower axes only
+    ax.xaxis.set_ticks_position('bottom')
+    ax.yaxis.set_ticks_position('left')
+
+    def offset(x, y):
+        return matplotlib.transforms.ScaledTranslation(x/72., y/72., fig.dpi_scale_trans)
+    for label in ax.xaxis.get_majorticklabels()[1:5]:
+        label.set_transform(label.get_transform() + offset(0, 16))
+    for label in ax.yaxis.get_majorticklabels()[1:]:
+        label.set_transform(label.get_transform() + offset(22, 0.5))
+    ax.yaxis.get_majorticklabels()[5].set_transform(label.get_transform() + offset(-17, 7))
+    ax.xaxis.get_majorticklabels()[5].set_transform(label.get_transform() + offset(7, -10))
+
+
+
+def hyperbola(x, ax):
+    ax.plot(x, 1 / x, c='tab:blue')
+    ax.fill_between(x, 0, 1/x, alpha=0.6, color='royalblue')
+
 def save_fig(fig, title, folder='unsorted', size=(5, 4)):
     fig.set_size_inches(*size)
     fig.tight_layout()
@@ -117,6 +146,21 @@ def main():
     ax2.set_title('Malus Gesetz anhand des Laserlichtes')
     ax2.legend()
     save_fig(fig2, 'malus', size=(7,5))
+
+    plt.rcParams.update({'figure.autolayout': True})
+    fig3 = plt.figure()
+    ax3 = fig3.subplots()
+    stab_plot_x_r = np.linspace(0, 4.5, 200)
+    center_axis(ax3, fig3)
+    hyperbola(stab_plot_x_r, ax3)
+    hyperbola(-stab_plot_x_r, ax3)
+    ax3.hlines(1, 0, 1, color='tab:red', label='Arbeitsbereich')
+    ax3.set_ylabel(r"$g_2$", labelpad=0, loc='top')
+    ax3.set_xlabel(r"$g_1$", labelpad=0, loc='right')
+    ax3.set_ylim(-4.5, 4.5)
+    ax3.set_xlim(-4.5, 4.5)
+    ax3.legend()
+    save_fig(fig3, "stabilität", size=(5,5))
     plt.show()
 
 if __name__ == "__main__":
