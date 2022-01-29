@@ -170,6 +170,7 @@ def main():
     ax4.set_xlabel(r'$L$/cm')
     ax4.set_ylabel(r'$P$/mW')
     ax4.legend()
+    ax4.set_ylim(0, 1.4)
     save_fig(fig4, 'leistung')
     plt.show()
 
