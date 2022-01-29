@@ -16,12 +16,10 @@ plt.rcParams.update({
     'pgf.rcfonts': False,
 })
 
-def kaustik(x, b, f, s, lam):
+def kaustik(x, b, s, f, lam):
     A = 1 - x/f
     B = s + x - x*s/f
-    C = -1/f
-    D = 1 - s/f
-    b_p = b*(A*D - C*B)/(A**2 + b**2*B**2)
+    b_p = b*(1)/(A**2 + b**2*B**2)
     return np.sqrt(lam/(np.pi*b_p))
 
 def malus(x, a, b):
@@ -84,18 +82,18 @@ def main():
     dist = 750
     lam = 632.8e-6
     print(lam)
-    kaustik_lam = functools.partial(kaustik, lam=lam)
+    kaustik_lam = functools.partial(kaustik, lam=lam, f=150) # Problem: distance sehr stark korreliert mit f (und b?)2
     kaustik_free = functools.partial(kaustik, lam=lam, x=0, f=np.inf)
-    params, pcov = curve_fit(kaustik_lam, x_data, y_data, p0=[0.002, 150, 750], sigma=s_y, absolute_sigma=True)
+    params, pcov = curve_fit(kaustik_lam, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)
     print(params)
     print(np.sqrt(np.diag(pcov)))
-    dist = params[-1]
+    #dist = params[-1]
     plot_x = np.linspace(0, max(x_data), 100)
     fig1, ax1 = set_up_plot()
 
     ax1.errorbar(x_data + dist, y_data, ls='', marker=marker, xerr=5, yerr=s_y, label='Experimentelle Daten', c='tab:blue')
-    ax1.plot(plot_x+params[-1], kaustik_lam(plot_x, *params), color='tab:red', label='Gefitteter Theoretischer Verlauf')
-    ax1.plot(np.linspace(0, params[-1]), kaustik_free(s=np.linspace(0, params[-1]), b=params[0]), color='tab:red')
+    ax1.plot(plot_x+dist, kaustik_lam(plot_x, *params), color='tab:red', label='Gefitteter Theoretischer Verlauf')
+    ax1.plot(np.linspace(0, dist), kaustik_free(s=np.linspace(0, dist), b=params[0]), color='tab:red')
     ax1.set_ylabel(r'$\omega^\prime$/mm')
     ax1.set_xlabel(r'Abstand zum Endspiegel im Resonator/mm')
     ax1.legend()
@@ -106,11 +104,11 @@ def main():
     p2 = np.array(
         [2.464e-6, 30.9e-6, 110e-6, 25.3e-6, 102e-6, 0.399e-3, 0.744e-3, 0.858e-3, 0.972e-3, 1.02e-3, 0.994e-3,
          0.907e-3])*1000
-    sigma2 = np.array([24e-9, 0.117e-6, 0.6e-6, 0.19e-6, 6.54e-6, 1.1e-3, 3.7e-3, 3.7e-3, 3 - 2e-3, 2.4e-3, 2.3e-3, 2.0e-3])
+    sigma2 = np.array([24e-9, 0.117e-6, 0.6e-6, 0.19e-6, 6.54e-6, 1.1e-6, 3.7e-6, 3.7e-6, 3.2e-6, 2.4e-6, 2.3e-6, 2.0e-6])*1000
     fig2, ax2 = set_up_plot()
 
-    params2 = curve_fit(malus, phi, p2)[0]#, sigma=sigma2, absolute_sigma=True)[0]
-    ax2.errorbar(phi, p2, yerr=0, ls='', marker=marker, label='Experimentelle Daten', c='tab:blue')
+    params2 = curve_fit(malus, phi, p2, sigma=sigma2, absolute_sigma=True)[0]
+    ax2.errorbar(phi, p2, yerr=sigma2,xerr=2/360*2*np.pi, ls='',marker=marker, label='Experimentelle Daten', c='tab:blue')
     plot_phi = np.linspace(min(phi), max(phi))
     print(params2)
     ax2.plot(plot_phi, malus(plot_phi, *params2), color='tab:red', label=r'Fit an Malus Gesetz: $I=I_0\cos(\phi)$')
