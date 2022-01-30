@@ -11,10 +11,10 @@ import matplotlib
 from sigfig import round
 
 # Plot stuff
-plt.style.use('ggplot')
+#plt.style.use('ggplot')
 plt.rcParams.update({
     'font.family': 'serif',
-    'text.usetex': False,
+    'text.usetex': True,
     'pgf.rcfonts': False,
 })
 
