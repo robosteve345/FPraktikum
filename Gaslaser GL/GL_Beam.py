@@ -8,6 +8,7 @@ from scipy.optimize import curve_fit
 import functools
 from matplotlib import ticker
 import matplotlib
+from sigfig import round
 
 # Plot stuff
 plt.style.use('ggplot')
@@ -17,7 +18,7 @@ plt.rcParams.update({
     'pgf.rcfonts': False,
 })
 
-def kaustik(x, b, s, f, lam):
+def kaustik(x, b, f, s, lam):
     A = 1 - x/f
     B = s + x - x*s/f
     b_p = b*(1)/(A**2 + b**2*B**2)
@@ -93,8 +94,6 @@ def center_axis(ax, fig):
     ax.yaxis.get_majorticklabels()[5].set_transform(label.get_transform() + offset(-17, 7))
     ax.xaxis.get_majorticklabels()[5].set_transform(label.get_transform() + offset(7, -10))
 
-
-
 def hyperbola(x, ax):
     ax.plot(x, 1 / x, c='tab:blue')
     ax.fill_between(x, 0, 1/x, alpha=0.6, color='royalblue')
@@ -111,20 +110,34 @@ def main():
     dist = 750
     lam = 632.8e-6
     print(lam)
-    kaustik_lam = functools.partial(kaustik, lam=lam, f=150) # Problem: distance sehr stark korreliert mit f (und b?)2
+    kaustik_lam_low = functools.partial(kaustik, lam=lam, s=740)
+    kaustik_lam_high = functools.partial(kaustik, lam=lam, s=760)
+    kaustik_lam = functools.partial(kaustik, lam=lam, s=750) # Problem: distance sehr stark korreliert mit f (und b?)2
     kaustik_free = functools.partial(kaustik, lam=lam, x=0, f=np.inf)
     params, pcov = curve_fit(kaustik_lam, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)
+    params_high =curve_fit(kaustik_lam_high, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)[0]
+    params_low =curve_fit(kaustik_lam_low, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)[0]
     print(params)
+    print(abs(params_high-params_low)/2)
     print(np.sqrt(np.diag(pcov)))
     #dist = params[-1]
-    plot_x = np.linspace(0, max(x_data), 100)
+    rounded_y = []
+    rounded_sy = []
+    for i in range(len(y_data)):
+        rounded_y.append(round(y_data[i], uncertainty=s_y[i], cutoff=29, sep='tuple')[0].astype(np.float64))
+        rounded_sy.append(round(y_data[i], uncertainty=s_y[i], cutoff=29, sep='tuple')[1].astype(np.float64))
+    dfk = pd.DataFrame(dict(L=x_data, omega=rounded_y, sigma=rounded_sy))
+    print(dfk)
+    print(dfk.to_latex(index=False))
+    plot_x = np.linspace(0, max(x_data)+50, 100)
     fig1, ax1 = set_up_plot()
 
     ax1.errorbar(x_data + dist, y_data, ls='', marker=marker, xerr=5, yerr=s_y, label='Experimentelle Daten', c='tab:blue')
     ax1.plot(plot_x+dist, kaustik_lam(plot_x, *params), color='tab:red', label='Gefitteter Theoretischer Verlauf')
     ax1.plot(np.linspace(0, dist), kaustik_free(s=np.linspace(0, dist), b=params[0]), color='tab:red')
-    ax1.set_ylabel(r'$\omega^\prime$/mm')
+    ax1.set_ylabel(r'$w^\prime$/mm')
     ax1.set_xlabel(r'Abstand zum Endspiegel im Resonator/mm')
+    ax1.set_xlim(0, max(x_data)+50+dist)
     ax1.legend()
     ax1.set_title('Kaustik des Laserstrahls mit Linse')
     save_fig(fig1, 'kaustik', size=(7, 5))
@@ -135,8 +148,7 @@ def main():
          0.907e-3])*1000
     sigma2 = np.array([24e-9, 0.117e-6, 0.6e-6, 0.19e-6, 6.54e-6, 1.1e-6, 3.7e-6, 3.7e-6, 3.2e-6, 2.4e-6, 2.3e-6, 2.0e-6])*1000
     fig2, ax2 = set_up_plot()
-    dfmalus = pd.DataFrame(dict(phi=phi, P=p2, sigma=sigma2))
-    print(dfmalus.to_latex(index=False))
+
     params2, pcov2 = curve_fit(malus, phi, p2, sigma=sigma2, absolute_sigma=True)
     ax2.errorbar(phi, p2, yerr=sigma2,xerr=2/360*2*np.pi, ls='',marker=marker, label='Experimentelle Daten', c='tab:blue')
     plot_phi = np.linspace(min(phi), max(phi))
