@@ -36,7 +36,7 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
     # ax.tick_params(which='both')
     #####
     # ax.set_ylim(ylim)
-    ax.set_xlim(xlim)
+    # ax.set_xlim(xlim)
 
     if error == True:
         ax.errorbar(x, y, yerr=yerr, capsize=cs, c=c, ms=ms, ls=ls,
@@ -63,11 +63,11 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
                  )
     if plot4 == True:
         ax.plot(x4, y4, ms=ms, lw=lw4, ls=ls4, marker=marker4, c=c4,
-               # label=r'{}'.format(plotlabel4)
+                label=r'{}'.format(plotlabel4)
                 )
     if plot5 == True:
         ax.plot(x5, y5, ms=ms, lw=lw5, ls=ls5, marker=marker5, c=c5,
-               # label=r'{}'.format(plotlabel5)
+                label=r'{}'.format(plotlabel5)
         )
     if plot6 == True:
         ax.plot(x6, y6, ms=ms, lw=lw6, ls=ls6, marker=marker6, c=c6,

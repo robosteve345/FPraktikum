@@ -53,6 +53,7 @@ def gaussian(x, A, mu, sigma):
     """
     return A*np.exp(-(x-mu)**2/(2*sigma**2))
 
+
 def lorentzian(x, x0, gamma, A):
     """
     Parameters
@@ -95,12 +96,12 @@ noise1 = noisecalc(I1, 50)
 noise2 = noisecalc(I2, 8)
 print("Hintergrund = {}mV".format(np.array([noise1, noise2])))
 print("Hintergrund Schwelle = {}".format(np.array([50,8])))
-niceplot(x=t1[indices1], y=I1[indices1] - noise1,
-         x2=t1, y2=I1 - noise1, c='tab:red', c2='tab:blue',
-         plot2=True, ls='', marker='x', plotlabel='Peaks', plotlabel2='Polarisationswinkel $\Theta=\pi/2$',
-         titel='Polarisation der Moden im kommerziellen Laser', legend=True,
-         xaxis='Kanal / u', yaxis='Spannung U / mV', size=(10,5), safefig=True, safename='mitpol', xlim=(0,600)
-         )
+# niceplot(x=t1[indices1], y=I1[indices1] - noise1,
+#          x2=t1, y2=I1 - noise1, c='tab:red', c2='tab:blue',
+#          plot2=True, ls='', marker='x', plotlabel='Peaks', plotlabel2='Polarisationswinkel $\Theta=\pi/2$',
+#          titel='Polarisation der Moden im kommerziellen Laser', legend=True,
+#          xaxis='Kanal / u', yaxis='Spannung U / mV', size=(10,5), safefig=True, safename='mitpol', xlim=(0,600)
+#          )
 popt7, cov7 = fit(gaussian, t2[60:120], I2[60:120] - noise2, p0=[122, 95, 10])
 popt8, cov8 = fit(gaussian, t2[160:220], I2[160:220] - noise2, p0=[60, 190, 10])
 popt9, cov9 = fit(gaussian, t2[380:460], I2[380:460] - noise2, p0=[125, 415, 10])
@@ -109,24 +110,23 @@ fitparameters_calc(t2[60:120], I2[60:120] - noise2, p0=[122, 95, 10], name='1st 
 fitparameters_calc(t2[160:220], I2[160:220] - noise2, p0=[60, 190, 10], name='2nd peak')
 fitparameters_calc(t2[380:460], I2[380:460] - noise2, p0=[125, 415, 10], name='3rd peak')
 fitparameters_calc(t2[480:540], I2[480:540] - noise2, p0=[60, 515, 10], name='4th peak')
-niceplot(x=t2[indices2], y=I2[indices2] - noise2,
-         x2=t2, y2=I2 - noise2, c='tab:red', c2='tab:blue',
-         plot2=True, ls='', marker='x', plotlabel='Peaks', plotlabel2='Messwerte',
-         titel='Longitudinales Modenspektrum des kommerziellen Lasers', legend=True,
-         xaxis='Kanal / u', yaxis='Spannung U / mV', size=(10,5), safefig=True, safename='ohnepol',
-         x3=np.linspace(-np.sqrt(2 * np.log(2)) * popt7[2] + popt7[1], np.sqrt(2 * np.log(2)) * popt7[2] + popt7[1], len(t2[60:120])),
-         y3=max(gaussian(t2[60:120], *popt7))*np.ones(len(t2[60:120])) / 2, c3='tab:red', plot3=True, plotlabel3='FWHM',
-         plot4=True, y4=max(gaussian(t2[160:220], *popt8))*np.ones(len(t2[160:220])) / 2,
-         x4= np.linspace(-np.sqrt(2 * np.log(2)) * popt8[2] + popt8[1], np.sqrt(2 * np.log(2)) * popt8[2] + popt8[1], len(t2[160:220])),
-         c4='tab:red',
-         plot5=True, y5=max(gaussian(t2[380:460], *popt9))*np.ones(len(t2[380:460])) / 2,
-         x5= np.linspace(-np.sqrt(2 * np.log(2)) * popt9[2] + popt9[1], np.sqrt(2 * np.log(2)) * popt9[2] + popt9[1], len(t2[380:460])),
-         c5='tab:red',
-         plot6=True, y6=max(gaussian(t2[480:540], *popt10))*np.ones(len(t2[480:540])) / 2,
-         x6= np.linspace(-np.sqrt(2 * np.log(2)) * popt10[2] + popt10[1], np.sqrt(2 * np.log(2)) * popt10[2] + popt10[1], len(t2[480:540])),
-         c6='tab:red', xlim=(0,600)
-         )
-
+# niceplot(x=t2[indices2], y=I2[indices2] - noise2,
+#          x2=t2, y2=I2 - noise2, c='tab:red', c2='tab:blue',
+#          plot2=True, ls='', marker='x', plotlabel='Peaks', plotlabel2='Messwerte',
+#          titel='Longitudinales Modenspektrum des kommerziellen Lasers', legend=True,
+#          xaxis='Kanal / u', yaxis='Spannung U / mV', size=(10,5), safefig=True, safename='ohnepol',
+#          x3=np.linspace(-np.sqrt(2 * np.log(2)) * popt7[2] + popt7[1], np.sqrt(2 * np.log(2)) * popt7[2] + popt7[1], len(t2[60:120])),
+#          y3=max(gaussian(t2[60:120], *popt7))*np.ones(len(t2[60:120])) / 2, c3='tab:red', plot3=True, plotlabel3='FWHM',
+#          plot4=True, y4=max(gaussian(t2[160:220], *popt8))*np.ones(len(t2[160:220])) / 2,
+#          x4= np.linspace(-np.sqrt(2 * np.log(2)) * popt8[2] + popt8[1], np.sqrt(2 * np.log(2)) * popt8[2] + popt8[1], len(t2[160:220])),
+#          c4='tab:red',
+#          plot5=True, y5=max(gaussian(t2[380:460], *popt9))*np.ones(len(t2[380:460])) / 2,
+#          x5= np.linspace(-np.sqrt(2 * np.log(2)) * popt9[2] + popt9[1], np.sqrt(2 * np.log(2)) * popt9[2] + popt9[1], len(t2[380:460])),
+#          c5='tab:red',
+#          plot6=True, y6=max(gaussian(t2[480:540], *popt10))*np.ones(len(t2[480:540])) / 2,
+#          x6= np.linspace(-np.sqrt(2 * np.log(2)) * popt10[2] + popt10[1], np.sqrt(2 * np.log(2)) * popt10[2] + popt10[1], len(t2[480:540])),
+#          c6='tab:red', xlim=(0,600)
+#          )
 
 u = sc.c/(2*0.075) / (np.mean(np.array([t2[indices2][3] - t2[indices2][1], t2[indices2][2] - t2[indices2][0]])))
 du = u*np.sqrt((sc.c*0.01/(2*(0.075)**2)/(sc.c/(2*0.075)))**2 + ((1)/(324.5))**2)
@@ -141,7 +141,7 @@ print("UNBEKANNTE RESONATORLÄNGE:")
 print("dnu={}u".format(np.array([indices2[1]-indices2[0], indices2[3]-indices2[2]])))
 print("mean dnu = ({} +- {})u".format(np.mean(np.array([indices2[1]-indices2[0], indices2[3]-indices2[2]])),
       (np.abs((indices2[1]-indices2[0]) - (indices2[3]-indices2[2])))/2))
-print("RESONATORLÄNGE L = ({}+-{})".format(sc.c/(2*np.mean(np.array([indices2[1]-indices2[0], indices2[3]-indices2[2]])*u)),
+print("RESONATORLÄNGE L = ({}+-{})m".format(sc.c/(2*np.mean(np.array([indices2[1]-indices2[0], indices2[3]-indices2[2]])*u)),
                             sc.c/(2*np.mean(np.array([indices2[1]-indices2[0],
                             indices2[3]-indices2[2]])*u)) * np.sqrt(((du)/(u))**2 + (0.5/(97.5))**2)))
 
@@ -153,41 +153,49 @@ t3, I3 = np.loadtxt('4peak.txt', usecols=(0, 1), unpack=True, skiprows=5) # schl
 t4, I4 = np.loadtxt('4peak2.txt', usecols=(0, 1), unpack=True, skiprows=5) # Bessere Peaks
 t5, I5 = np.loadtxt('4peak61.txt', usecols=(0, 1), unpack=True, skiprows=5)
 # get peaks for gaussian fit
-# indices3, parameters3 = find_peaks(I3, height=25) schlechte daten
 indices4, parameters4 = find_peaks(I4, height=40, distance=16)
 indices5, parameters5 = find_peaks(I5, height=40, distance=16)
+print("indices4={}".format(indices4))
+print("indices5={}".format(indices5))
+print("height4={}".format(I4[indices4]))
+print("height5={}".format(I5[indices5]))
 # estimate noise
 noise4, noise5 = noisecalc(I4, 32), noisecalc(I5, 30)
-print("Hintergrund = {}mV".format(np.array([noise4, noise5])))
-print("Hintergrund Schwelle = {}".format(np.array([30,30])))
+print("Hintergrund = 4:{}mV, 5:{}mV".format(noise4, noise5))
+print("Hintergrund Schwelle = {}".format(np.array([20, 30, 30])))
 # Gauss-fits
-# popt3, cov3 = fit(gaussian, t3[indices3], I3[indices3] # schlechte daten
-                 # )
 fitparameters_calc(t4[indices4[0:4]], I4[indices4[0:4]] - noise4, p0=[150, 139, 100], name='41')
 fitparameters_calc(t4[indices4[4:8]], I4[indices4[4:8]] - noise4, p0=[150, 434, 100], name='42')
 fitparameters_calc(t5[indices5[0:4]], I5[indices5[0:4]] - noise5, p0=[150, 133, 100], name='51')
 fitparameters_calc(t5[indices5[4:8]], I5[indices5[4:8]] - noise5, p0=[150, 454, 100], name='52')
-popt41, cov41 = fit(gaussian, t4[indices4[0:4]], I4[indices4[0:4]] - noise4, p0=[150, 139, 100],
+popt41, cov41 = fit(gaussian, t4[indices4[0:4]], I4[indices4[0:4]] - noise4, p0=[100, 136, 20],
                  absolute_sigma=True)
-popt42, cov42 = fit(gaussian, t4[indices4[4:8]], I4[indices4[4:8]] - noise4, p0=[150, 434, 100],
+popt42, cov42 = fit(gaussian, t4[indices4[4:8]], I4[indices4[4:8]] - noise4, p0=[95, 425, 20],
                  absolute_sigma=True)
-popt51, cov51 = fit(gaussian, t5[indices5[0:4]], I5[indices5[0:4]] - noise5, p0=[150, 133, 100],
+popt51, cov51 = fit(gaussian, t5[indices5[0:4]], I5[indices5[0:4]] - noise5, p0=[110, 133, 20],
                  absolute_sigma=True)
-popt52, cov52 = fit(gaussian, t5[indices5[4:8]], I5[indices5[4:8]] - noise5, p0=[150, 454, 100],
+popt52, cov52 = fit(gaussian, t5[indices5[4:8]], I5[indices5[4:8]] - noise5, p0=[110, 455, 20],
                  absolute_sigma=True)
+A = np.array([popt41[0], popt42[0], popt51[0], popt52[0]])
+mu = np.array([popt41[1], popt42[1], popt51[1], popt52[1]])
 sigma = np.array([popt41[2], popt42[2], popt51[2], popt52[2]])
 gamma = 2 * np.sqrt(2 * np.log(2)) * sigma # FWHM for gaussian distributions
 dsigma = np.array([np.sqrt(np.diag(cov41))[2], np.sqrt(np.diag(cov42))[2],
                    np.sqrt(np.diag(cov51))[2], np.sqrt(np.diag(cov52))[2] ])
+print("A={}".format(A))
+print("mu={}".format(mu))
+print("sigma={}".format(sigma))
+print("FWHM={}".format(gamma))
 dgamma = 2 * np.sqrt(2 * np.log(2)) * dsigma
 
 # Plot
-niceplot(x=t4, x2=t3, y=I4 - noise4, y2=I3, plotlabel=r'L=80cm second image',
-         plotlabel2='L=80cm ', plotlabel3='L=61cm',
+# 80 cm plot 2(bessere daten)
+niceplot(x=t4, y=I4 - noise4,
+         plotlabel='L=80cm (2)', plotlabel3='L=61cm',
          plot2=False, size=(10, 5), c='tab:blue', c2='tab:olive', legend=True, plot4=True,
          plot5=True, x5=t4[indices4], y5=I4[indices4] - noise4, c5='tab:red', ls5='', marker5='x', plotlabel5='peaks',
          x4=np.linspace(0,300, 1000), y4=gaussian(np.linspace(0,300,1000), *popt41), c4='tab:green',
-         x6=np.linspace(300,600,1000), plot6=True, c6='tab:green', y6=gaussian(np.linspace(300,600,1000), *popt42),
+         x6=np.linspace(300,600,1000), plot6=True, c6='tab:orange', y6=gaussian(np.linspace(300,600,1000), *popt42),
          plotlabel6='Gauß-fit'
          )
 # Bei Breiteren Peaks: Besserer Fit möglich
