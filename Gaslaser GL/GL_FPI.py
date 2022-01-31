@@ -20,8 +20,6 @@ def noisecalc(x, limit):
     for i in x:
         if i < limit:
             noise.append(i)
-        else:
-            i =+ 1
     return np.mean(np.asarray(noise))
 
 
@@ -187,7 +185,8 @@ print("mu={}".format(mu))
 print("sigma={}".format(sigma))
 print("FWHM={}".format(gamma))
 dgamma = 2 * np.sqrt(2 * np.log(2)) * dsigma
-
+print(np.mean(indices4[0:4]))
+print(np.std(indices4[0:4]))
 # Plot
 # 80 cm plot 2(bessere daten)
 niceplot(x=t4, y=I4 - noise4,
@@ -198,10 +197,13 @@ niceplot(x=t4, y=I4 - noise4,
          x6=np.linspace(300,600,1000), plot6=True, c6='tab:orange', y6=gaussian(np.linspace(300,600,1000), *popt42),
          plotlabel6='Gauß-fit'
          )
-# Bei Breiteren Peaks: Besserer Fit möglich
+
+#Bei Breiteren Peaks: Besserer Fit möglich
 niceplot(x=t5, y=I5 - noise5, c='tab:blue', legend=True, plotlabel='L=61cm',
          x2=np.linspace(0,300,1000), y2=gaussian(np.linspace(0,300,1000), *popt51), plot2=True, c2='tab:green',
          x3=t5[indices5], y3=I5[indices5] - noise5, plot3=True, ls3='', marker3='x', c3='tab:red',
          plot4=True, x4=np.linspace(300,600,1000), y4=gaussian(np.linspace(300,600,1000), *popt52), c4='tab:green',
          plotlabel4='Gauß-fit', size=(10, 5)
          )
+
+plt.show()
