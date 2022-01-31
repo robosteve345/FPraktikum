@@ -19,7 +19,8 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
              safename=None, yaxis=None, xaxis=None, yerr=None, plotlabel=None,
              legend=None, plotlabel2=None, plotlabel3=None, plotlabel4=None,
              plotlabel5=None, plotlabel6=None, plotlabel7=None, titel=None,
-             #xlim=None, ylim=None
+             xlim=None,
+             # ylim=None
              ):
     fig = plt.figure(figsize=size)
     ax = fig.add_subplot(1, 1, 1)
@@ -35,7 +36,7 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
     # ax.tick_params(which='both')
     #####
     # ax.set_ylim(ylim)
-    # ax.set_xlim(xlim)
+    ax.set_xlim(xlim)
 
     if error == True:
         ax.errorbar(x, y, yerr=yerr, capsize=cs, c=c, ms=ms, ls=ls,
@@ -58,21 +59,25 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
                 label=r'{}'.format(plotlabel2))
     if plot3 == True:
         ax.plot(x3, y3, ms=ms, lw=lw3, ls=ls3, marker=marker3, c=c3,
-                label=r'{}'.format(plotlabel3))
+                label=r'{}'.format(plotlabel3)
+                 )
     if plot4 == True:
         ax.plot(x4, y4, ms=ms, lw=lw4, ls=ls4, marker=marker4, c=c4,
-                label=r'{}'.format(plotlabel4))
+               # label=r'{}'.format(plotlabel4)
+                )
     if plot5 == True:
         ax.plot(x5, y5, ms=ms, lw=lw5, ls=ls5, marker=marker5, c=c5,
-                label=r'{}'.format(plotlabel5))
+               # label=r'{}'.format(plotlabel5)
+        )
     if plot6 == True:
         ax.plot(x6, y6, ms=ms, lw=lw6, ls=ls6, marker=marker6, c=c6,
-                label=r'{}'.format(plotlabel6))
+               # label=r'{}'.format(plotlabel6)
+        )
     if plot7 == True:
         ax.plot(x7, y7, ms=ms, lw=lw7, ls=ls7, marker=marker7, c=c7,
                 label=r'{}'.format(plotlabel7))
     if legend == True:
-        ax.legend(fontsize=fs-4, markerscale=ms/5, facecolor='white')
+        ax.legend(fontsize=fs-4, markerscale=ms/10, facecolor='white')
     if safefig == True:
         plt.savefig('{}.svg'.format(safename), dpi=300)
 
