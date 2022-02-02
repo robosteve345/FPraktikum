@@ -264,3 +264,4 @@ print("FWHM+-FWHM=({}+-{})Hz".format(np.mean(FWHM), np.mean(dFWHM)))
 #                                                                                                   140, 134, 27) + 20, c7='tab:olive',
 #          plot6=True, x6=np.linspace(300,600,1000), y6=gaussian2(np.linspace(300,600,1000), 110, 452, 25) + 20, c6='tab:orange'
 #          )
+plt.show()
