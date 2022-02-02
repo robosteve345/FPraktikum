@@ -21,8 +21,6 @@ def noisecalc(x, limit):
     for i in x:
         if i < limit:
             noise.append(i)
-        else:
-            i =+ 1
     return np.mean(np.asarray(noise))
 
 
@@ -124,6 +122,7 @@ fitparameters_calc(t2[160:220], I2[160:220], ordinate=True,p0=[60, 190, 10, 10],
 fitparameters_calc(t2[380:460], I2[380:460], ordinate=True,p0=[125, 415, 10, 10], name='3rd peak')
 fitparameters_calc(t2[480:540], I2[480:540], ordinate=True,p0=[60, 515, 10, 10], name='4th peak')
 u = sc.c/(2*0.075) / (np.mean(np.array([t2[indices2][3] - t2[indices2][1], t2[indices2][2] - t2[indices2][0]]))) # in Hz
+du = u*np.sqrt((sc.c*0.01/(2*(0.075)**2)/(sc.c/(2*0.075)))**2 + ((1)/(324.5))**2)
 A2 = np.array([popt7[0], popt8[0], popt9[0], popt10[0]])
 dA2 = np.array([ np.sqrt(np.diag(cov7))[0], np.sqrt(np.diag(cov8))[0],
                    np.sqrt(np.diag(cov9))[0], np.sqrt(np.diag(cov10))[0] ])
@@ -135,6 +134,7 @@ FWHM2 = 2 * np.sqrt(2 * np.log(2)) * sigma2
 dsigma2 = np.array([np.sqrt(np.diag(cov7))[2], np.sqrt(np.diag(cov8))[2],
                    np.sqrt(np.diag(cov9))[2], np.sqrt(np.diag(cov10))[2] ])*u
 dFWHM2 = 2 * np.sqrt(2 * np.log(2)) * dsigma2
+print("GEWICHTETER WERT: FWHM=({}+-{})Hz".format(np.dot(FWHM2, dFWHM2), np.sqrt(1/(np.sum(dFWHM2**2)))))
 print("PARAMETER KOMMERZIELLER LASER")
 print("A={}mV".format(A2))
 print("dA={}mV".format(dA2))
@@ -144,7 +144,6 @@ print("sigma2={}Hz".format(sigma2))
 print("dsigma2={}Hz".format(dsigma2))
 print("FWHM={}Hz".format(FWHM2))
 print("dFWHM={}Hz".format(dFWHM2))
-print("A+-∆A=({}+-{})mV".format(np.mean(A2), np.mean(dA2)))
 print("sigma2+-sigma2=({}+-{})Hz".format(np.mean(sigma2), np.mean(dsigma2)))
 print("FWHM+-FWHM=({}+-{})Hz".format(np.mean(FWHM2), np.mean(dFWHM2)))
 # niceplot(x=t2[indices2], y=I2[indices2],
@@ -164,7 +163,6 @@ print("FWHM+-FWHM=({}+-{})Hz".format(np.mean(FWHM2), np.mean(dFWHM2)))
 #          x6= np.linspace(-np.sqrt(2 * np.log(2)) * popt10[2] + popt10[1], np.sqrt(2 * np.log(2)) * popt10[2] + popt10[1], len(t2[480:540])),
 #          c6='tab:red', xlim=(0,600)
 #          )
-du = u*np.sqrt((sc.c*0.01/(2*(0.075)**2)/(sc.c/(2*0.075)))**2 + ((1)/(324.5))**2)
 print("Theoretischer FSR = ({}+-{})1/s".format(sc.c/(2*0.075), sc.c*0.01/(2*(0.075)**2)))  # FPI: FSR=c/2d
 print("dt = {}".format(np.array([t2[indices2][3] - t2[indices2][1], t2[indices2][2] - t2[indices2][0]])))
 print("mean FSR = ({} +- {})u".format(np.mean(np.array([t2[indices2][3] - t2[indices2][1], t2[indices2][2] - t2[indices2][0]])),
@@ -240,30 +238,29 @@ print("sigma={}Hz".format(sigma))
 print("dsigma={}Hz".format(dsigma))
 print("FWHM={}Hz".format(FWHM))
 print("dFWHM={}Hz".format(dFWHM))
-print("A+-∆A=({}+-{})mV".format(np.mean(A), np.mean(dA)))
 print("sigma+-sigma=({}+-{})Hz".format(np.mean(sigma), np.mean(dsigma)))
 print("FWHM+-FWHM=({}+-{})Hz".format(np.mean(FWHM), np.mean(dFWHM)))
+# Plot
+# 80 cm plot 2(bessere daten)
+# niceplot(x=t4, y=I4 - noise4,
+#          plotlabel='L=80cm (2)', plotlabel3='L=61cm',
+#          plot2=False, size=(10, 5), c='tab:blue', c2='tab:olive', legend=True, plot4=True,
+#          plot5=True, x5=t4[indices4], y5=I41[indices4], c5='tab:red', ls5='', marker5='x', plotlabel5='peaks',
+#          x4=np.linspace(0,300, 1000), y4=gaussian1(np.linspace(0,300,1000), *popt41), c4='tab:green',
+#          x6=np.linspace(300,600,1000), plot6=True, c6='tab:orange', y6=gaussian1(np.linspace(300,600,1000), *popt42),
+#          plotlabel6='Gauß-fit', xlim=(0,600), plot7=True, x7=np.linspace(300,600,1000), y7=gaussian1(np.linspace(300,600,1000),
+#                                                                                                   95, 430, 28, 16), c7='tab:olive',
+#          plot3=True, x3=t4, y3=I41, c3='k'
+#          )
 
-# # Plot
-# # 80 cm plot 2(bessere daten)
-niceplot(x=t4, y=I4,
-         plotlabel='L=80cm (2)', 
-         plot2=False, size=(10, 5), c='tab:blue', c2='tab:olive', legend=True, plot4=True,
-         plot5=True, x5=t4[indices4], y5=I41[indices4], c5='tab:red', ls5='', marker5='x', plotlabel5='peaks',
-         x4=np.linspace(0,300, 1000), y4=gaussian1(np.linspace(0,300,1000), *popt41), c4='tab:green',
-         x6=np.linspace(300,600,1000), plot6=True, c6='tab:orange', y6=gaussian1(np.linspace(300,600,1000), *popt42),
-         plotlabel6='Gauß-fit', xlim=(0,600), plot7=True, x7=np.linspace(300,600,1000), y7=gaussian1(np.linspace(300,600,1000),
-                                                                                                  95, 430, 28, 16), c7='tab:olive',
-         plot3=True, x3=t4, y3=I41, c3='k'
-         )
 # 41: 100, 135, 30, 18, 42: 95, 430, 28, 16, 51:
 # # Bei Breiteren Peaks: Besserer Fit möglich
-niceplot(x=t5, y=I5, c='tab:blue', legend=True, plotlabel='L=61cm',
-         x2=np.linspace(0,300,1000), y2=gaussian1(np.linspace(0,300,1000), *popt51), plot2=True, c2='tab:green',
-         x3=t5[indices5], y3=I51[indices5], plot3=True, ls3='', marker3='x', c3='tab:red',
-         plot4=True, x4=np.linspace(300,600,1000), y4=gaussian2(np.linspace(300,600,1000), *popt52), c4='tab:green',
-         plot5=True, x5=t5, y5=I51, lw5=2.3, c5='k',
-         plotlabel4='Gauß-fit', size=(10, 5), xlim=(0,600), plot7=True, x7=np.linspace(0,300,1000), y7=gaussian2(np.linspace(0,300,1000),
-                                                                                                  140, 134, 27) + 20, c7='tab:olive',
-         plot6=True, x6=np.linspace(300,600,1000), y6=gaussian2(np.linspace(300,600,1000), 110, 452, 25) + 20, c6='tab:orange'
-         )
+# niceplot(x=t5, y=I5, c='tab:blue', legend=True, plotlabel='L=61cm',
+#          x2=np.linspace(0,300,1000), y2=gaussian1(np.linspace(0,300,1000), *popt51), plot2=True, c2='tab:green',
+#          x3=t5[indices5], y3=I51[indices5], plot3=True, ls3='', marker3='x', c3='tab:red',
+#          plot4=True, x4=np.linspace(300,600,1000), y4=gaussian2(np.linspace(300,600,1000), *popt52), c4='tab:green',
+#          plot5=True, x5=t5, y5=I51, lw5=2.3, c5='k',
+#          plotlabel4='Gauß-fit', size=(10, 5), xlim=(0,600), plot7=True, x7=np.linspace(0,300,1000), y7=gaussian2(np.linspace(0,300,1000),
+#                                                                                                   140, 134, 27) + 20, c7='tab:olive',
+#          plot6=True, x6=np.linspace(300,600,1000), y6=gaussian2(np.linspace(300,600,1000), 110, 452, 25) + 20, c6='tab:orange'
+#          )

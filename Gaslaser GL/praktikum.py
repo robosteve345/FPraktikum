@@ -81,5 +81,4 @@ def niceplot(x, y, c, lw=None, lw2=None, lw3=None, lw4=None, lw5=None, lw6=None,
         ax.legend(fontsize=fs-4, markerscale=ms/10, facecolor='white')
     if safefig == True:
         plt.savefig('{}.svg'.format(safename), dpi=300)
-
-    plt.show()
+    return ax
