@@ -18,7 +18,7 @@ plt.rcParams.update({
     'pgf.rcfonts': False,
 })
 
-def kaustik(x, b, f, s, lam):
+def kaustik(x, b, s, f, lam):
     A = 1 - x/f
     B = s + x - x*s/f
     b_p = b*(1)/(A**2 + b**2*B**2)
@@ -110,16 +110,22 @@ def main():
     dist = 750
     lam = 632.8e-6
     print(lam)
-    kaustik_lam_low = functools.partial(kaustik, lam=lam, s=740)
-    kaustik_lam_high = functools.partial(kaustik, lam=lam, s=760)
-    kaustik_lam = functools.partial(kaustik, lam=lam, s=750) # Problem: distance sehr stark korreliert mit f (und b?)2
+    # kaustik_lam_low = functools.partial(kaustik, lam=lam, s=740)
+    # kaustik_lam_high = functools.partial(kaustik, lam=lam, s=760)
+    kaustik_lam = functools.partial(kaustik, lam=lam, f=145) # Problem: distance sehr stark korreliert mit f (und b?)2
     kaustik_free = functools.partial(kaustik, lam=lam, x=0, f=np.inf)
-    params, pcov = curve_fit(kaustik_lam, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)
-    params_high =curve_fit(kaustik_lam_high, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)[0]
-    params_low =curve_fit(kaustik_lam_low, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)[0]
+    params, pcov = curve_fit(kaustik_lam, x_data, y_data, p0=[0.002, 750], sigma=s_y, absolute_sigma=True)
+    # params_high =curve_fit(kaustik_lam_high, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)[0]
+    # params_low =curve_fit(kaustik_lam_low, x_data, y_data, p0=[0.002, 150], sigma=s_y, absolute_sigma=True)[0]
+    # print(pcov)
     print(params)
-    print(abs(params_high-params_low)/2)
-    print(np.sqrt(np.diag(pcov)))
+    # print(pcov[0,1]/np.prod(np.sqrt(np.diag(pcov))))
+    # # print(abs(params_high-params_low)/2)
+    # print(np.sqrt(np.diag(pcov)))
+    w=np.sqrt(lam/(np.pi*params[0]))
+    print(w)
+    # print(w*np.sqrt(np.diag(pcov))[0]/params[0])
+    # print(((lam/np.pi)**2*795*(1000-795))**0.25)
     #dist = params[-1]
     rounded_y = []
     rounded_sy = []
@@ -181,6 +187,7 @@ def main():
     sigma = np.array([2.8 , 3.2 , 4.8 , 3 , 2.6 , 1.8])/1000
     fig4, ax4 = set_up_plot()
     ax4.errorbar(L, P, yerr=sigma, xerr=0.5, marker='x', ls='',label='Messpunkte')
+    ax4.errorbar(L[2], P[2], yerr=sigma[2], xerr=0.5, marker='x', ls='', label='Outlier', c='tab:red')
     ax4.set_xlabel(r'$L$/cm')
     ax4.set_ylabel(r'$P$/mW')
     ax4.legend()
